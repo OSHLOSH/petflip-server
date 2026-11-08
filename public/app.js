@@ -4,8 +4,7 @@
 
 // Your trade bots. joinUrl = Roblox private server / profile link (optional)
 const BOTS = [
-  { name: 'Ps99_Water', online: true, joinUrl: '' },
-  { name: 'Ps99_Air',   online: true, joinUrl: '' },
+  { name: 'petflip_grass', online: true, joinUrl: '' },
 ];
 
 // Server URL. Leave '' when server.js serves this page. Test mode turns on automatically if no server answers.
