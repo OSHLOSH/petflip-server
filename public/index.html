@@ -541,8 +541,8 @@ select.inp{flex:0 0 auto;padding-right:8px;cursor:pointer}
     <!-- ═══ ADMIN ═══ -->
     <section class="page" id="p-admin">
       <div class="card adm-card" id="adm-login" style="max-width:460px">
-        <h3>🔐 Admin</h3>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:12px">Enter the ADMIN_KEY you set on Render.</p>
+        <h3>🔐 Owner login</h3>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:12px">Link your Roblox account first, then enter the owner key once — after that the Admin tab shows up for your account automatically.</p>
         <div class="adm-row"><input class="inp" id="adm-key" type="password" placeholder="Admin key" onkeydown="if(event.key==='Enter')admLogin()"><button class="btn btn-p btn-sm" onclick="admLogin()">Unlock</button></div>
         <div class="err" id="adm-err"></div>
       </div>
@@ -560,6 +560,14 @@ select.inp{flex:0 0 auto;padding-right:8px;cursor:pointer}
               <div class="adm-row"><input class="inp" id="adm-img" placeholder="Image URL (https://…png)" oninput="admPrev()"></div>
               <div class="adm-row"><button class="btn btn-s btn-sm" onclick="admReset()">Clear</button><div class="grow"></div><button class="btn btn-p btn-sm" onclick="admSavePet()">Save pet</button></div>
               <div class="err" id="adm-perr"></div>
+            </div>
+            <div class="card adm-card" id="adm-staff-card" style="display:none">
+              <h3>👥 Staff</h3>
+              <p style="font-size:12px;color:var(--dim);margin-bottom:10px" id="adm-owner"></p>
+              <p style="font-size:12px;color:var(--mute);margin-bottom:10px">Staff can see the Admin tab and manage pets, stock, deposits and withdrawals. Only you can add or remove staff. They must have linked their Roblox account.</p>
+              <div class="adm-row"><input class="inp" id="adm-staff-user" placeholder="Roblox username" onkeydown="if(event.key==='Enter')admStaffAdd()"><button class="btn btn-p btn-sm" onclick="admStaffAdd()">Add staff</button></div>
+              <div class="err" id="adm-serr"></div>
+              <table class="tbl adm-tbl"><tbody id="adm-staff"></tbody></table>
             </div>
             <div class="card adm-card">
               <h3>Credit a deposit manually</h3>

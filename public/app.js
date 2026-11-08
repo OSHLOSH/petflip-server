@@ -102,7 +102,7 @@ async function api(path, opts={}){
 }
 function syncMe(j){
   if(!j || !j.inv) return;
-  S.user = j.user || S.user;
+  S.user = j.user || S.user; S.role = j.role || null;
   S.inv = j.inv.map(nItem);
   S.hist = j.hist || [];
   S.pending = (j.withdraws||[]).map(w=>({id:w.id, items:w.items.map(nItem), t:w.t}));
@@ -113,7 +113,7 @@ async function refreshCatalog(){ if(!API_ON) return; try{ const j=await api('/ap
 async function refreshMe(){
   if(!SV()) return;
   try{ syncMe(await api('/api/me')); }
-  catch(e){ if(e.status===401){ S.user=null; S.session=''; S.inv=[]; save(); toast('Session expired — link your account again'); } }
+  catch(e){ if(e.status===401){ S.user=null; S.session=''; S.role=null; S.inv=[]; save(); toast('Session expired — link your account again'); } }
 }
 
 /* ── ROUTER ── */
@@ -124,7 +124,6 @@ const PAGES = {
 };
 function go(p){
   if(!PAGES[p]) p='coinflip';
-  if(p==='admin') $('nav-admin').style.display='';
   document.querySelectorAll('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
   document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('on',e.dataset.p===p));
   $('pg-title').textContent=PAGES[p][0]; $('pg-sub').textContent=PAGES[p][1];
@@ -136,6 +135,7 @@ function go(p){
 /* ── RENDER ── */
 function render(){
   $('top-bal').innerHTML = gv(sumv(S.inv));
+  $('nav-admin').style.display = S.role ? '' : 'none';
   $('top-ava').innerHTML=avaInner(); $('top-ava').style.display=S.user?'':'none'; $('top-link').style.display=S.user?'none':'';
   renderKpis(); renderFlips(); renderJp(); renderUpInv(); renderUpTargets(); updUp(); renderHist();
 }
@@ -532,20 +532,44 @@ function linkDone(){ $('lk-done-name').textContent=userName(); $('lk-card3').inn
 async function unlink(){
   if(!confirm('Unlink '+userName()+'?')) return;
   if(SV()){ try{ await api('/api/logout',{body:{}}); }catch(e){} S.inv=[]; S.hist=[]; S.pending=[]; }
-  S.user=null; S.session=''; save(); closeOv('ov-prof'); render(); toast('Account unlinked');
+  S.user=null; S.session=''; S.role=null; save(); closeOv('ov-prof'); render(); toast('Account unlinked');
 }
 
 /* ══════════════ ADMIN ══════════════ */
 let ADM={key:'', state:null, edit:null};
 try{ ADM.key=sessionStorage.getItem('pf_admin')||''; }catch(e){}
-const admApi=(p,body)=>api(p,{body, headers:{'x-admin-key':ADM.key}});
-async function admInit(){ if(!API_ON){ $('adm-err').textContent='Admin needs the server — open the site from your Render link.'; return; } if(ADM.key) await admLoad(); }
-async function admLogin(){ ADM.key=$('adm-key').value.trim(); try{ sessionStorage.setItem('pf_admin',ADM.key); }catch(e){} await admLoad(); }
-async function admLoad(){
-  try{ ADM.state=await api('/api/admin/state',{headers:{'x-admin-key':ADM.key}}); }
-  catch(e){ $('adm-err').textContent=e.message; $('adm-panel').style.display='none'; $('adm-login').style.display=''; return; }
-  $('adm-login').style.display='none'; $('adm-panel').style.display=''; setPets(ADM.state.pets); admRender();
+const admHdr=()=>ADM.key?{'x-admin-key':ADM.key}:{};
+const admApi=(p,body)=>api(p,{body, headers:admHdr()});
+async function admInit(){
+  if(!API_ON){ $('adm-err').textContent='Admin needs the server — open the site from your Render link.'; return; }
+  if(S.role || ADM.key) await admLoad(); else { $('adm-panel').style.display='none'; $('adm-login').style.display=''; }
 }
+async function admLogin(){
+  ADM.key=$('adm-key').value.trim(); $('adm-err').textContent='';
+  try{
+    if(SV()){ await api('/api/admin/claim',{body:{},headers:admHdr()}); S.role='owner'; save(); ADM.key=''; }
+    else { await api('/api/admin/state',{headers:admHdr()}); try{ sessionStorage.setItem('pf_admin',ADM.key); }catch(e){} }
+  }catch(e){ $('adm-err').textContent=e.message; ADM.key=''; return; }
+  $('adm-key').value=''; render(); await admLoad();
+  if(!SV()) toast('Unlocked for this tab. Link your Roblox account and unlock again to make it permanent.');
+}
+async function admLoad(){
+  try{ ADM.state=await api('/api/admin/state',{headers:admHdr()}); }
+  catch(e){ $('adm-err').textContent=e.status===403?"You don't have access to this page.":e.message; $('adm-panel').style.display='none'; $('adm-login').style.display=''; if(e.status===403 && S.role){ S.role=null; save(); render(); } return; }
+  $('adm-login').style.display='none'; $('adm-panel').style.display=''; setPets(ADM.state.pets);
+  $('adm-staff-card').style.display = ADM.state.role==='owner' ? '' : 'none';
+  admRender(); if(ADM.state.role==='owner') admStaffLoad();
+}
+async function admStaffLoad(){
+  try{
+    const j=await api('/api/admin/staff',{headers:admHdr()});
+    $('adm-owner').innerHTML = j.owner ? `Owner: <b>${esc(j.owner.displayName||j.owner.name)}</b> <span style="color:var(--mute)">@${esc(j.owner.name)}</span>` : 'Owner not bound yet — link your Roblox account and unlock again.';
+    $('adm-staff').innerHTML = j.staff.length ? j.staff.map(u=>`<tr><td><div style="display:flex;align-items:center;gap:10px"><div class="ava you" style="width:30px;height:30px;font-size:11px">${avaFor(u)}</div><b>${esc(u.displayName||u.name)}</b> <span style="color:var(--mute)">@${esc(u.name)}</span></div></td><td style="text-align:right"><button class="btn btn-r btn-sm" onclick="admStaffRemove(${u.id})">Remove</button></td></tr>`).join('')
+      : `<tr><td colspan="2" style="color:var(--mute);padding:16px">No staff yet.</td></tr>`;
+  }catch(e){ $('adm-serr').textContent=e.message; }
+}
+async function admStaffAdd(){ $('adm-serr').textContent=''; try{ await admApi('/api/admin/staff/add',{username:$('adm-staff-user').value}); $('adm-staff-user').value=''; toast('Staff added — they can now see the Admin tab','ok'); admStaffLoad(); }catch(e){ $('adm-serr').textContent=e.message; } }
+async function admStaffRemove(id){ try{ await admApi('/api/admin/staff/remove',{userId:id}); toast('Staff removed'); admStaffLoad(); }catch(e){ toast(e.message,'bad'); } }
 function admRender(){
   const s=ADM.state;
   $('adm-kpis').innerHTML=`<div class="kpi" style="--c:var(--gold-g)"><small>Bot stock value</small><b style="color:var(--gold)">${gv(s.houseValue)}</b></div><div class="kpi"><small>Bot stock items</small><b>${s.houseItems}</b></div><div class="kpi"><small>Catalogue pets</small><b>${s.pets.length}</b></div><div class="kpi" style="--c:var(--lose-g)"><small>Pending withdrawals</small><b>${s.withdraws.length}</b></div>`;
