@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PetFlip.gg — PS99 Coinflip, Jackpot & Upgrader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090d;--bg2:#0c0e14;--panel:#11141c;--panel2:#161a24;--panel3:#1c2130;
+  --line:#21263a;--line2:#2c3350;
+  --text:#eef0f6;--dim:#9aa1b8;--mute:#5f6680;
+  --brand:#7c5cff;--brand2:#a48bff;--brand-g:rgba(124,92,255,.35);
+  --gold:#ffc83d;--gold-g:rgba(255,200,61,.3);
+  --win:#2ee59d;--win-g:rgba(46,229,157,.3);
+  --lose:#ff4d6d;--lose-g:rgba(255,77,109,.3);
+  --heads:#ffc83d;--tails:#7c5cff;
+  --r-garg:#ff3b5c;--r-titan:#ff4fd8;--r-huge:#ffb020;--r-exclusive:#3d8bff;--r-legendary:#b86bff;--r-rare:#2ee59d;--r-gems:#5fd4ff;
+  --rad:14px;--side:232px;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;color:var(--text)}
+svg{display:block}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+
+.app{display:grid;grid-template-columns:var(--side) 1fr;height:100vh}
+
+/* ── SIDEBAR ── */
+.side{background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 14px;gap:4px;overflow-y:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 20px;cursor:pointer}
+.logo-mark{width:38px;height:38px;border-radius:11px;background:conic-gradient(from 210deg,var(--gold),#ff8a3d,var(--brand),var(--gold));display:grid;place-items:center;box-shadow:0 6px 24px var(--brand-g)}
+.logo-mark span{width:28px;height:28px;border-radius:50%;background:var(--bg2);display:grid;place-items:center;font-weight:900;font-size:14px;color:var(--gold)}
+.logo-txt{font-weight:900;font-size:19px;letter-spacing:-.6px}.logo-txt i{font-style:normal;color:var(--brand2)}
+.nav-h{font-size:10px;font-weight:700;letter-spacing:1.4px;color:var(--mute);text-transform:uppercase;padding:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;color:var(--dim);font-weight:600;font-size:14px;transition:.15s;position:relative;width:100%;text-align:left}
+.nav svg{width:19px;height:19px;flex-shrink:0}
+.nav:hover{background:var(--panel);color:var(--text)}
+.nav.on{background:linear-gradient(90deg,rgba(124,92,255,.18),rgba(124,92,255,.04));color:#fff}
+.nav.on::before{content:'';position:absolute;left:-14px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.nav.on svg{color:var(--brand2)}
+.nav .pill{margin-left:auto;font-size:10px;font-weight:800;background:var(--panel3);color:var(--dim);padding:2px 7px;border-radius:6px}
+.nav.on .pill{background:var(--brand);color:#fff}
+.side-foot{margin-top:auto;padding-top:16px}
+.side-card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--rad);padding:14px}
+.side-card h4{font-size:13px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.side-card p{font-size:12px;color:var(--dim);line-height:1.5}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;min-width:0;height:100vh}
+.top{height:68px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 24px;background:rgba(12,14,20,.8);backdrop-filter:blur(12px)}
+.top h1{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.top .crumb{font-size:12px;color:var(--mute);font-weight:500;margin-top:2px}
+.grow{flex:1}
+.bal{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:0 6px 0 12px;height:42px;cursor:pointer;transition:.15s}
+.bal:hover{border-color:var(--line2)}
+.bal b{font-family:var(--mono);font-size:14px}
+.bal small{font-size:10px;color:var(--mute);display:block;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.bal .plus{width:30px;height:30px;border-radius:8px;background:var(--win);color:#04130c;display:grid;place-items:center;font-weight:900}
+.btn{height:42px;padding:0 16px;border-radius:11px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px;transition:.15s;white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn-p{background:linear-gradient(180deg,#8d71ff,#6a48f5);color:#fff;box-shadow:0 6px 22px var(--brand-g),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn-p:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-g{background:linear-gradient(180deg,#3cf0aa,#1fc985);color:#03130b;box-shadow:0 6px 22px var(--win-g),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-g:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-y{background:linear-gradient(180deg,#ffd666,#f5b316);color:#1a1200;box-shadow:0 6px 22px var(--gold-g),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-y:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-s{background:var(--panel2);border:1px solid var(--line);color:var(--dim)}
+.btn-s:hover{color:var(--text);border-color:var(--line2)}
+.btn-r{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:var(--lose)}
+.btn-r:hover{background:rgba(255,77,109,.2)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;filter:none!important}
+.btn-sm{height:34px;padding:0 12px;font-size:12px;border-radius:9px}
+.avatar{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--brand),#ff6ad5);display:grid;place-items:center;font-weight:900;font-size:16px;cursor:pointer;border:2px solid var(--line2)}
+
+.view{flex:1;overflow-y:auto;padding:24px}
+.wrap{max-width:1240px;margin:0 auto}
+.page{display:none;animation:fade .25s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── HERO STRIP / STATS ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--rad);padding:16px 18px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,var(--c,var(--brand-g)),transparent 70%);opacity:.6}
+.kpi small{font-size:11px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.kpi b{display:block;font-family:var(--mono);font-size:22px;margin-top:6px;letter-spacing:-.5px}
+.kpi .up{color:var(--win)}.kpi .dn{color:var(--lose)}
+
+.section-h{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+.section-h h2{font-size:16px;font-weight:800}
+.section-h .count{font-size:12px;color:var(--mute);font-weight:600;background:var(--panel2);padding:3px 9px;border-radius:7px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--rad)}
+
+/* ── GEM ICON ── */
+.gem{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:4px}
+
+/* ── ITEM TILE ── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.tile{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1.5px solid var(--line);border-radius:12px;padding:12px 8px 10px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transition:.15s;user-select:none}
+.tile::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,var(--rc),transparent 62%);opacity:.18;transition:.15s}
+.tile::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--rc)}
+.tile:hover{transform:translateY(-2px);border-color:var(--line2)}
+.tile:hover::before{opacity:.3}
+.tile.sel{border-color:var(--win);box-shadow:0 0 0 3px rgba(46,229,157,.15)}
+.tile.sel .chk{display:grid}
+.tile.dis{opacity:.35;pointer-events:none}
+.tile .em{font-size:38px;line-height:1;margin:4px 0 8px;position:relative;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))}
+.tile .nm{font-size:11px;font-weight:600;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.tile .vl{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold);margin-top:3px;position:relative}
+.tile .rar{position:absolute;top:7px;left:7px;font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--rc)}
+.tile .chk{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--win);color:#03130b;font-size:11px;font-weight:900;display:none;place-items:center}
+.r-garg{--rc:var(--r-garg)}.r-titan{--rc:var(--r-titan)}.r-huge{--rc:var(--r-huge)}.r-exclusive{--rc:var(--r-exclusive)}.r-legendary{--rc:var(--r-legendary)}.r-rare{--rc:var(--r-rare)}.r-gems{--rc:var(--r-gems)}
+
+.chip{width:34px;height:34px;border-radius:9px;background:var(--panel3);border:1px solid var(--line2);display:grid;place-items:center;font-size:18px;position:relative;flex-shrink:0}
+.chip::after{content:'';position:absolute;bottom:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--rc)}
+.chip.more{font-size:11px;font-weight:800;color:var(--dim)}
+.chips{display:flex;gap:4px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:56px 20px;color:var(--dim)}
+.empty .ic{width:64px;height:64px;margin:0 auto 14px;border-radius:18px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-size:28px}
+.empty h3{font-size:15px;color:var(--text);margin-bottom:6px}
+.empty p{font-size:13px;max-width:360px;margin:0 auto 16px;line-height:1.55}
+
+/* ── COINFLIP ── */
+.cf-head{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#16123a,#0f1224 55%,#1a1508);border:1px solid var(--line);border-radius:18px;padding:22px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+.cf-head::before{content:'';position:absolute;right:120px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.25),transparent 65%)}
+.cf-head::after{content:'';position:absolute;right:-40px;bottom:-90px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,61,.18),transparent 65%)}
+.cf-head h2{font-size:24px;font-weight:900;letter-spacing:-.6px}
+.cf-head p{font-size:13px;color:var(--dim);margin-top:4px}
+.cf-coins{display:flex;position:relative;z-index:1}
+.mini-coin{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.4)}
+.mc-h{background:radial-gradient(circle at 35% 30%,#fff2b8,var(--heads) 55%,#c98f00);color:#5a3d00}
+.mc-t{background:radial-gradient(circle at 35% 30%,#d8ccff,var(--tails) 55%,#3e24a8);color:#fff;margin-left:-14px}
+
+.flips{display:flex;flex-direction:column;gap:10px}
+.flip{display:grid;grid-template-columns:220px 1fr 120px 1fr 220px;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--rad);padding:14px 16px;transition:.15s}
+.flip:hover{border-color:var(--line2);background:var(--panel2)}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who.r{flex-direction:row-reverse;text-align:right}
+.ava{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:15px;flex-shrink:0;position:relative}
+.ava .side-dot{position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;border:2px solid var(--panel);font-size:9px;display:grid;place-items:center;font-weight:900}
+.ava.you{background:linear-gradient(135deg,var(--brand),#ff6ad5)}
+.ava.bot{background:linear-gradient(135deg,#1f2a44,#2d3b63);color:var(--brand2)}
+.ava.open{background:var(--panel3);border:2px dashed var(--line2);color:var(--mute)}
+.who .n{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .s{font-size:11px;color:var(--mute);margin-top:2px}
+.mid{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mid .v{font-family:var(--mono);font-weight:700;color:var(--gold);font-size:14px}
+.mid .vs{font-size:10px;font-weight:900;color:var(--mute);letter-spacing:2px}
+.mid .range{font-size:10px;color:var(--mute)}
+.chips.r{justify-content:flex-end}
+.acts{display:flex;gap:6px;justify-content:flex-end}
+
+/* ── MODALS ── */
+.ov{position:fixed;inset:0;background:rgba(4,5,9,.78);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
+.ov.on{display:flex;animation:fade .18s}
+.md{background:var(--panel);border:1px solid var(--line2);border-radius:20px;width:560px;max-width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 30px 100px rgba(0,0,0,.7);overflow:hidden}
+.md.wide{width:920px}
+.md-h{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.md-h h3{font-size:17px;font-weight:800}
+.md-h p{font-size:12px;color:var(--mute);margin-top:2px}
+.x{margin-left:auto;width:34px;height:34px;border-radius:9px;background:var(--panel2);display:grid;place-items:center;color:var(--dim);transition:.15s}
+.x:hover{color:var(--text);background:var(--panel3)}
+.md-b{padding:20px 22px;overflow-y:auto;flex:1}
+.md-f{display:flex;gap:10px;align-items:center;padding:16px 22px;border-top:1px solid var(--line);background:var(--bg2)}
+.lbl{font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.7px;margin:0 0 10px}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.sideopt{display:flex;align-items:center;gap:12px;padding:14px;border-radius:13px;background:var(--panel2);border:2px solid var(--line);transition:.15s}
+.sideopt:hover{border-color:var(--line2)}
+.sideopt.on.h{border-color:var(--heads);background:rgba(255,200,61,.07)}
+.sideopt.on.t{border-color:var(--tails);background:rgba(124,92,255,.09)}
+.sideopt .mini-coin{width:40px;height:40px;font-size:14px;margin:0}
+.sideopt b{font-size:14px}.sideopt small{display:block;font-size:11px;color:var(--mute);font-weight:500}
+.tools{display:flex;gap:8px;margin-bottom:12px}
+.inp{flex:1;height:38px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:0 12px;font-size:13px;outline:none;transition:.15s}
+.inp:focus{border-color:var(--brand)}
+.inp::placeholder{color:var(--mute)}
+select.inp{flex:0 0 auto;padding-right:8px;cursor:pointer}
+.picker{max-height:340px;overflow-y:auto;padding:2px}
+.sum{flex:1;font-size:13px;color:var(--dim)}
+.sum b{font-family:var(--mono);color:var(--gold);font-size:15px}
+
+/* ── FLIP ROOM ── */
+.room{display:grid;grid-template-columns:1fr 240px 1fr;align-items:center;gap:20px;padding:10px 0}
+.room-side{background:var(--panel2);border:2px solid var(--line);border-radius:16px;padding:18px;text-align:center;transition:.3s;min-height:210px;display:flex;flex-direction:column;align-items:center}
+.room-side .ava{width:62px;height:62px;font-size:20px;margin-bottom:10px}
+.room-side .n{font-weight:800}
+.room-side .v{font-family:var(--mono);color:var(--gold);font-weight:700;margin:4px 0 10px}
+.room-side .chips{flex-wrap:wrap;justify-content:center}
+.room-side.won{border-color:var(--win);box-shadow:0 0 40px var(--win-g);background:rgba(46,229,157,.06)}
+.room-side.lost{opacity:.45;filter:grayscale(.6)}
+.stage{height:220px;display:grid;place-items:center;perspective:1000px;position:relative}
+.coin3d{width:150px;height:150px;position:relative;transform-style:preserve-3d}
+.coin3d .face{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;display:grid;place-items:center;font-weight:900;font-size:44px}
+.coin3d .face.h{background:radial-gradient(circle at 35% 30%,#fff5c8,var(--heads) 50%,#b07c00);color:#5a3d00;box-shadow:inset 0 0 0 8px rgba(255,255,255,.18),inset 0 0 0 12px rgba(0,0,0,.12),0 0 60px var(--gold-g)}
+.coin3d .face.t{background:radial-gradient(circle at 35% 30%,#e0d6ff,var(--tails) 50%,#341c96);color:#fff;transform:rotateY(180deg);box-shadow:inset 0 0 0 8px rgba(255,255,255,.15),inset 0 0 0 12px rgba(0,0,0,.15),0 0 60px var(--brand-g)}
+.stage .shadow{position:absolute;bottom:10px;width:110px;height:14px;border-radius:50%;background:rgba(0,0,0,.6);filter:blur(6px)}
+.countdown{font-family:var(--mono);font-size:56px;font-weight:700;color:var(--dim)}
+.result{text-align:center;font-size:22px;font-weight:900;min-height:32px;margin-top:6px}
+.result.w{color:var(--win);text-shadow:0 0 30px var(--win-g)}.result.l{color:var(--lose);text-shadow:0 0 30px var(--lose-g)}
+.fair{margin-top:16px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--mute);line-height:1.8;word-break:break-all}
+.fair b{color:var(--dim);font-weight:700}
+
+/* ── JACKPOT ── */
+.jp-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px}
+.jp-grid>*{min-width:0}
+.jp-top{padding:22px;position:relative;overflow:hidden}
+.jp-pot{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px}
+.jp-pot small{font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.7px;text-transform:uppercase}
+.jp-pot b{display:block;font-family:var(--mono);font-size:34px;color:var(--gold);letter-spacing:-1px;text-shadow:0 0 30px var(--gold-g)}
+.jp-timer{margin-left:auto;text-align:right}
+.jp-timer b{color:var(--text);text-shadow:none}
+.strip-wrap{position:relative;height:118px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);overflow:hidden}
+.strip-wrap::before,.strip-wrap::after{content:'';position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
+.strip-wrap::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent)}
+.strip-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg2),transparent)}
+.strip{display:flex;gap:6px;padding:14px 0;height:100%;will-change:transform}
+.stile{flex:0 0 84px;height:90px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border-bottom:4px solid var(--pc);font-size:11px;font-weight:700;color:var(--dim)}
+.stile .ava{width:38px;height:38px;font-size:13px}
+.marker{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:var(--gold);z-index:3;box-shadow:0 0 16px var(--gold)}
+.marker::before,.marker::after{content:'';position:absolute;left:50%;margin-left:-8px;border:8px solid transparent}
+.marker::before{top:0;border-top-color:var(--gold)}
+.marker::after{bottom:0;border-bottom-color:var(--gold)}
+.bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--panel3);margin-top:16px}
+.bar div{transition:width .4s}
+.entries{display:flex;flex-direction:column;gap:8px}
+.entry{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--panel2);border-left:4px solid var(--pc)}
+.entry .n{font-weight:700;font-size:13px}
+.entry .s{font-size:11px;color:var(--mute);font-family:var(--mono)}
+.entry .pct{margin-left:auto;font-family:var(--mono);font-weight:700;font-size:14px}
+.jp-side{padding:18px}
+.jp-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+
+/* ── UPGRADER ── */
+.up-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px minmax(0,1fr);gap:16px;align-items:start}
+.up-col{padding:16px;min-height:520px;display:flex;flex-direction:column}
+.up-col .picker{max-height:none;flex:1}
+.up-center{padding:22px;display:flex;flex-direction:column;align-items:center}
+.wheel{position:relative;width:280px;height:280px;margin:6px 0 18px}
+.wheel svg{width:100%;height:100%;transform:rotate(-90deg)}
+.wheel .needle{position:absolute;left:50%;top:50%;width:0;height:0;transition:none}
+.wheel .needle i{position:absolute;left:-3px;top:-128px;width:6px;height:44px;border-radius:4px;background:#fff;box-shadow:0 0 18px rgba(255,255,255,.8)}
+.wheel .needle i::after{content:'';position:absolute;left:-5px;top:-8px;border:8px solid transparent;border-bottom:10px solid #fff;border-top:0}
+.wheel-core{position:absolute;inset:44px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--panel3),var(--bg2));border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.wheel-core b{font-family:var(--mono);font-size:36px;letter-spacing:-1px}
+.wheel-core small{font-size:11px;color:var(--mute);font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.wheel-core .mult{font-family:var(--mono);color:var(--gold);font-weight:700;margin-top:4px}
+.wheel.win svg .arc-win{filter:drop-shadow(0 0 12px var(--win))}
+.up-io{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:14px}
+.io{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.io small{font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.6px}
+.io b{display:block;font-family:var(--mono);color:var(--gold);font-size:15px;margin-top:3px}
+.mults{display:flex;gap:6px;width:100%;margin-bottom:14px}
+.mults button{flex:1;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);font-family:var(--mono);font-weight:700;font-size:12px;color:var(--dim);transition:.15s}
+.mults button:hover{color:var(--text);border-color:var(--brand)}
+.up-res{font-size:18px;font-weight:900;min-height:26px;margin-top:12px}
+.up-res.w{color:var(--win)}.up-res.l{color:var(--lose)}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .mono{font-family:var(--mono)}
+.tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase}
+.tag.w{background:rgba(46,229,157,.12);color:var(--win)}.tag.l{background:rgba(255,77,109,.12);color:var(--lose)}
+.tag.g{background:var(--panel3);color:var(--dim)}
+
+/* ── DEPOSIT ── */
+.dep-hero{padding:22px;background:linear-gradient(135deg,#0c2a1e,#0e1420 70%);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.dep-hero.wd{background:linear-gradient(135deg,#221640,#0e1420 70%)}
+.dep-hero h3{font-size:20px;font-weight:900}
+.dep-hero p{font-size:13px;color:var(--dim);margin-top:4px}
+.dep-hero .big{position:absolute;right:18px;top:50%;transform:translateY(-50%) rotate(-10deg);font-size:72px;opacity:.5}
+.bots{display:flex;flex-direction:column;gap:10px}
+.botrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:13px;background:var(--panel2);border:1px solid var(--line)}
+.botrow .n{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--win);box-shadow:0 0 10px var(--win)}
+.dot.off{background:var(--mute);box-shadow:none}
+.botrow .t{font-size:10px;font-weight:800;color:var(--win);background:rgba(46,229,157,.1);padding:2px 7px;border-radius:5px;letter-spacing:.5px;margin-top:4px;display:inline-block}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.step{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.step .num{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:var(--brand);font-weight:900;font-size:12px}
+.step b{font-size:12px;display:block}.step small{font-size:11px;color:var(--mute)}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.22);color:#ff8fa3;font-size:12px;line-height:1.5}
+.note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:rgba(124,92,255,.08);border:1px solid rgba(124,92,255,.25);color:var(--brand2);font-size:12px;line-height:1.5}
+.dev{margin-top:16px;padding:14px;border-radius:12px;border:1px dashed var(--line2);background:var(--bg2)}
+.dev b{font-size:12px}.dev p{font-size:11px;color:var(--mute);margin:3px 0 10px}
+
+/* ── INVENTORY ── */
+.inv{display:grid;grid-template-columns:190px 1fr;min-height:440px}
+.inv-cats{border-right:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:3px}
+.cat{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:13px;font-weight:600;color:var(--dim);transition:.15s;width:100%;text-align:left}
+.cat:hover{background:var(--panel2);color:var(--text)}
+.cat.on{background:var(--panel3);color:#fff}
+.cat i{width:8px;height:8px;border-radius:50%;background:var(--rc,var(--mute))}
+.cat span{margin-left:auto;font-size:11px;font-family:var(--mono);color:var(--mute)}
+.inv-main{padding:14px;display:flex;flex-direction:column;min-width:0}
+.inv-main .picker{max-height:420px}
+.inv-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 22px;border-bottom:1px solid var(--line)}
+.inv-kpis .kpi{padding:12px 14px}.inv-kpis .kpi b{font-size:18px}
+
+/* ── TOAST ── */
+.toasts{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:500}
+.toast{background:var(--panel2);border:1px solid var(--line2);border-left:3px solid var(--brand);border-radius:11px;padding:12px 16px;font-size:13px;font-weight:500;box-shadow:0 14px 40px rgba(0,0,0,.5);animation:tin .2s ease;max-width:340px}
+.toast.ok{border-left-color:var(--win)}.toast.bad{border-left-color:var(--lose)}
+@keyframes tin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.faq summary{font-weight:700;font-size:14px;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.faq summary::after{content:'+';color:var(--mute);font-weight:400;font-size:18px}
+.faq details[open] summary::after{content:'–'}
+.faq p{font-size:13px;color:var(--dim);line-height:1.6;margin-top:10px}
+
+.form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-row label{font-size:12px;font-weight:700;color:var(--dim)}
+
+/* ── LINK ACCOUNT ── */
+.ava img,.avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.avatar{overflow:hidden;padding:0}
+.ava{overflow:visible}.ava img{border-radius:50%}
+.rbx-card{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);margin-bottom:16px}
+.rbx-card .pic{width:64px;height:64px;border-radius:14px;background:var(--panel3);overflow:hidden;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:22px}
+.rbx-card .pic img{width:100%;height:100%;object-fit:cover}
+.rbx-card b{font-size:16px;display:block}.rbx-card small{font-size:12px;color:var(--mute)}
+.phrase{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:13px;background:var(--bg2);border:1.5px dashed var(--brand);margin:8px 0 16px}
+.phrase code{flex:1;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--brand2);word-break:break-word;line-height:1.5}
+.how{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.how div{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--dim);line-height:1.5}
+.how i{font-style:normal;flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--panel3);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--text)}
+.err{font-size:13px;color:var(--lose);min-height:18px;margin-top:10px;line-height:1.5}
+.lk-step{display:none}.lk-step.on{display:block}
+.btn-link{background:linear-gradient(180deg,#8d71ff,#6a48f5);color:#fff;box-shadow:0 6px 22px var(--brand-g)}
+.ok-big{width:80px;height:80px;border-radius:50%;margin:10px auto 16px;background:rgba(46,229,157,.12);border:2px solid var(--win);display:grid;place-items:center;font-size:36px;box-shadow:0 0 40px var(--win-g)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media (max-width:1100px){
+  .flip{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "c c" "d e"}
+  .up-grid{grid-template-columns:1fr}
+  .jp-grid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .top .crumb{display:none}.bal small{display:none}
+  .cf-head{flex-wrap:wrap}
+  .side{position:fixed;bottom:0;left:0;right:0;top:auto;height:64px;flex-direction:row;padding:6px;z-index:50;border-right:none;border-top:1px solid var(--line);overflow-x:auto}
+  .logo,.nav-h,.side-foot,.nav .pill{display:none}
+  .nav{flex-direction:column;gap:3px;font-size:10px;padding:6px 10px;width:auto}
+  .nav.on::before{display:none}
+  .view{padding:16px 14px 90px}
+  .top{padding:0 14px}.top .hide-m{display:none}
+  .room{grid-template-columns:1fr}
+  .inv{grid-template-columns:1fr}.inv-cats{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line)}
+  .cat{width:auto;white-space:nowrap}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═════════ SIDEBAR ═════════ -->
+<aside class="side">
+  <div class="logo" onclick="go('coinflip')">
+    <div class="logo-mark"><span>P</span></div>
+    <div class="logo-txt">Pet<i>Flip</i>.gg</div>
+  </div>
+  <div class="nav-h">Games</div>
+  <button class="nav" data-p="coinflip" onclick="go('coinflip')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1.3-1.8 3-1.8s3 .8 3 1.8-1.3 1.6-3 1.8-3 .8-3 1.8 1.3 1.8 3 1.8 3-.8 3-1.8"/></svg>Coinflip<span class="pill" id="pill-cf">0</span></button>
+  <button class="nav" data-p="jackpot" onclick="go('jackpot')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.4 6.4"/></svg>Jackpot</button>
+  <button class="nav" data-p="upgrader" onclick="go('upgrader')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Upgrader</button>
+  <div class="nav-h">Account</div>
+  <button class="nav" data-p="history" onclick="go('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/></svg>History</button>
+  <button class="nav" data-p="fair" onclick="go('fair')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Provably Fair</button>
+  <button class="nav" data-p="faq" onclick="go('faq')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/></svg>FAQ</button>
+  <div class="side-foot">
+    <div class="side-card">
+      <h4>🛡️ Your items. Your power.</h4>
+      <p>Every roll is provably fair. Verify any game from your History.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ═════════ MAIN ═════════ -->
+<div class="main">
+  <header class="top">
+    <div><h1 id="pg-title">Coinflip</h1><div class="crumb" id="pg-sub">Double your pets, 50/50</div></div>
+    <div class="grow"></div>
+    <div class="bal" onclick="openInv()" title="Inventory">
+      <div><small>Inventory</small><b id="top-bal">0</b></div>
+      <div class="plus" onclick="event.stopPropagation();openDep()">+</div>
+    </div>
+    <button class="btn btn-s hide-m" onclick="openWd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Withdraw</button>
+    <button class="btn btn-g" onclick="openDep()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Deposit</button>
+    <button class="btn btn-link" id="top-link" onclick="openLink()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Link Roblox</button>
+    <div class="avatar" id="top-ava" onclick="openProfile()" title="Profile" style="display:none">G</div>
+  </header>
+
+  <main class="view"><div class="wrap">
+
+    <!-- ═══ COINFLIP ═══ -->
+    <section class="page" id="p-coinflip">
+      <div class="cf-head">
+        <div class="cf-coins"><div class="mini-coin mc-h">H</div><div class="mini-coin mc-t">T</div></div>
+        <div style="position:relative;z-index:1;margin-left:8px">
+          <h2>Coinflip</h2>
+          <p>Wager your pets, pick a side, winner takes the whole pot.</p>
+        </div>
+        <div class="grow"></div>
+        <button class="btn btn-y" style="position:relative;z-index:1" onclick="openCreate()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>Create Flip</button>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="section-h"><h2>Open Flips</h2><span class="count" id="cf-count">0</span></div>
+      <div class="flips" id="flips"></div>
+    </section>
+
+    <!-- ═══ JACKPOT ═══ -->
+    <section class="page" id="p-jackpot">
+      <div class="jp-grid">
+        <div>
+          <div class="card jp-top">
+            <div class="jp-pot">
+              <div><small>Pot Value</small><b id="jp-pot">0</b></div>
+              <div><small>Items</small><b id="jp-items" style="color:var(--text);text-shadow:none;font-size:22px">0</b></div>
+              <div class="jp-timer"><small id="jp-state">Waiting for players</small><b id="jp-time">--</b></div>
+            </div>
+            <div class="strip-wrap"><div class="marker"></div><div class="strip" id="jp-strip"></div></div>
+            <div class="bar" id="jp-bar"></div>
+          </div>
+          <div class="section-h" style="margin-top:20px"><h2>Entries</h2><span class="count" id="jp-ecount">0</span></div>
+          <div class="entries" id="jp-entries"></div>
+        </div>
+        <div class="card jp-side">
+          <div class="lbl">How it works</div>
+          <p style="font-size:13px;color:var(--dim);line-height:1.6">Everyone throws pets into one pot. Your chance to win equals your share of the pot value. Once 2+ players are in, a 20s timer starts — then the wheel picks one winner who takes everything.</p>
+          <div class="jp-actions">
+            <button class="btn btn-y" id="jp-join" onclick="openJpJoin()">Join Pot</button>
+            <button class="btn btn-s" id="jp-bot" onclick="jpCallBot()">🤖 Call Bot</button>
+          </div>
+          <div class="note" style="margin-top:14px"><span>ℹ️</span><span>No other players in the pot? Call the house bot — it adds pets matching your entry value.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ UPGRADER ═══ -->
+    <section class="page" id="p-upgrader">
+      <div class="up-grid">
+        <div class="card up-col">
+          <div class="section-h" style="margin-top:0"><h2>Your Items</h2><span class="count" id="up-sel-count">0 selected</span></div>
+          <div class="tools"><input class="inp" placeholder="Search…" id="up-q1" oninput="renderUpInv()"></div>
+          <div class="picker" id="up-inv"></div>
+        </div>
+        <div class="card up-center">
+          <div class="up-io">
+            <div class="io"><small>You put in</small><b id="up-in">0</b></div>
+            <div class="io"><small>You can win</small><b id="up-out">0</b></div>
+          </div>
+          <div class="wheel" id="wheel">
+            <svg viewBox="0 0 280 280">
+              <circle cx="140" cy="140" r="122" fill="none" stroke="#2a1520" stroke-width="20"/>
+              <circle class="arc-lose" cx="140" cy="140" r="122" fill="none" stroke="rgba(255,77,109,.55)" stroke-width="20" id="arc-lose"/>
+              <circle class="arc-win" cx="140" cy="140" r="122" fill="none" stroke="#2ee59d" stroke-width="20" stroke-linecap="butt" id="arc-win"/>
+            </svg>
+            <div class="wheel-core"><small>Chance</small><b id="up-chance">0%</b><div class="mult" id="up-mult">0.00x</div></div>
+            <div class="needle" id="needle"><i></i></div>
+          </div>
+          <div class="mults">
+            <button onclick="quickMult(1.5)">1.5x</button><button onclick="quickMult(2)">2x</button><button onclick="quickMult(3)">3x</button><button onclick="quickMult(5)">5x</button><button onclick="quickMult(10)">10x</button>
+          </div>
+          <button class="btn btn-p" style="width:100%;justify-content:center;height:48px;font-size:15px" id="up-go" onclick="doUpgrade()">Upgrade</button>
+          <div class="up-res" id="up-res"></div>
+        </div>
+        <div class="card up-col">
+          <div class="section-h" style="margin-top:0"><h2>Target</h2><span class="count" id="up-tgt-name">none</span></div>
+          <div class="tools"><input class="inp" placeholder="Search pets…" id="up-q2" oninput="renderUpTargets()"></div>
+          <div class="picker" id="up-tgts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ HISTORY ═══ -->
+    <section class="page" id="p-history">
+      <div class="kpis" id="kpis2"></div>
+      <div class="card" style="overflow-x:auto"><table class="tbl"><thead><tr><th>Game</th><th>Time</th><th>Wager</th><th>Payout</th><th>Result</th><th>Roll</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+    </section>
+
+    <!-- ═══ FAIR ═══ -->
+    <section class="page" id="p-fair">
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <h2 style="font-size:18px;margin-bottom:8px">How results are generated</h2>
+        <p style="font-size:13px;color:var(--dim);line-height:1.7">Before every game a random <b>server seed</b> is created and its SHA-256 <b>hash</b> is shown to you. The result is <span style="font-family:var(--mono);color:var(--text)">SHA256(serverSeed:clientSeed:nonce)</span> — the first 13 hex characters turned into a number between 0 and 1. After the game the server seed is revealed, so you can check the hash matches and recompute the roll yourself. You can change your client seed from your profile.</p>
+        <p style="font-size:13px;color:var(--dim);line-height:1.7;margin-top:8px">Coinflip: roll &lt; 0.5 = Heads, otherwise Tails. Jackpot: roll × pot value picks the winning ticket. Upgrader: roll &lt; win chance = success.</p>
+      </div>
+      <div class="card" style="padding:22px">
+        <h2 style="font-size:16px;margin-bottom:14px">Verify a roll</h2>
+        <div class="form-row"><label>Server seed</label><input class="inp" id="v-server" style="flex:none"></div>
+        <div class="form-row"><label>Client seed</label><input class="inp" id="v-client" style="flex:none"></div>
+        <div class="form-row"><label>Nonce</label><input class="inp" id="v-nonce" type="number" style="flex:none"></div>
+        <button class="btn btn-p" onclick="verify()">Verify</button>
+        <div class="fair" id="v-out">Paste seeds from any game in History, or click “Verify” on a history row.</div>
+      </div>
+    </section>
+
+    <!-- ═══ FAQ ═══ -->
+    <section class="page" id="p-faq">
+      <div class="faq">
+        <details open><summary>How do I deposit?</summary><p>Click Deposit, join one of our bots' servers in Pet Simulator 99, and send it a trade with the pets or gems you want to deposit. Once the trade completes they show up in your inventory.</p></details>
+        <details><summary>How do I withdraw?</summary><p>Click Withdraw, select the items you want, confirm, then join the bot's server. The bot will send you a trade with your items — accept it in-game.</p></details>
+        <details><summary>How are pet values decided?</summary><p>Every pet has a fixed value in our catalogue (click “Check Pet Values” in the deposit window). Values are updated as the market moves.</p></details>
+        <details><summary>What is “Call Bot”?</summary><p>If nobody joins your coinflip or the jackpot, the house bot can join with pets matching your value. Odds are exactly the same as against a player.</p></details>
+        <details><summary>Beware of impersonators</summary><p>Only trade with the bot usernames shown in the Deposit/Withdraw window. Staff will never DM you first asking for pets.</p></details>
+      </div>
+    </section>
+
+  </div></main>
+</div>
+</div>
+
+<!-- ═════════ CREATE FLIP ═════════ -->
+<div class="ov" id="ov-create"><div class="md wide">
+  <div class="md-h"><div><h3>Create Coinflip</h3><p>Pick a side and choose pets from your inventory</p></div><button class="x" onclick="closeOv('ov-create')">✕</button></div>
+  <div class="md-b">
+    <div class="lbl">Your side</div>
+    <div class="sides">
+      <button class="sideopt h on" id="so-h" onclick="pickSide('h')"><div class="mini-coin mc-h">H</div><div style="text-align:left"><b>Heads</b><small>Gold side</small></div></button>
+      <button class="sideopt t" id="so-t" onclick="pickSide('t')"><div class="mini-coin mc-t" style="margin:0">T</div><div style="text-align:left"><b>Tails</b><small>Purple side</small></div></button>
+    </div>
+    <div class="lbl">Select items</div>
+    <div class="tools"><input class="inp" placeholder="Search…" id="cr-q" oninput="renderCreatePicker()"><button class="btn btn-s btn-sm" onclick="crSelAll()">Select all</button><button class="btn btn-s btn-sm" onclick="crClear()">Clear</button></div>
+    <div class="picker" id="cr-picker"></div>
+  </div>
+  <div class="md-f"><div class="sum">Wager: <b id="cr-sum">0</b> · <span id="cr-n">0</span> items</div><button class="btn btn-s" onclick="closeOv('ov-create')">Cancel</button><button class="btn btn-y" id="cr-go" onclick="createFlip()">Create Flip</button></div>
+</div></div>
+
+<!-- ═════════ FLIP ROOM ═════════ -->
+<div class="ov" id="ov-room"><div class="md wide">
+  <div class="md-h"><div><h3 id="room-title">Coinflip</h3><p id="room-sub"></p></div><button class="x" id="room-x" onclick="closeOv('ov-room')">✕</button></div>
+  <div class="md-b">
+    <div class="room">
+      <div class="room-side" id="rs-a"></div>
+      <div>
+        <div class="stage"><div class="coin3d" id="coin"><div class="face h">H</div><div class="face t">T</div></div><div class="shadow"></div></div>
+        <div class="result" id="room-res"></div>
+      </div>
+      <div class="room-side" id="rs-b"></div>
+    </div>
+    <div class="fair" id="room-fair"></div>
+  </div>
+</div></div>
+
+<!-- ═════════ JACKPOT JOIN ═════════ -->
+<div class="ov" id="ov-jp"><div class="md wide">
+  <div class="md-h"><div><h3>Join Jackpot</h3><p>Choose pets to throw in the pot</p></div><button class="x" onclick="closeOv('ov-jp')">✕</button></div>
+  <div class="md-b">
+    <div class="tools"><input class="inp" placeholder="Search…" id="jp-q" oninput="renderJpPicker()"></div>
+    <div class="picker" id="jp-picker"></div>
+  </div>
+  <div class="md-f"><div class="sum">Entry: <b id="jp-sum">0</b></div><button class="btn btn-s" onclick="closeOv('ov-jp')">Cancel</button><button class="btn btn-y" onclick="jpJoin()">Join Pot</button></div>
+</div></div>
+
+<!-- ═════════ INVENTORY ═════════ -->
+<div class="ov" id="ov-inv"><div class="md wide">
+  <div class="md-h"><div class="avatar" id="inv-ava" style="width:40px;height:40px">G</div><div><h3 id="inv-name">Guest</h3><p>Your inventory</p></div><button class="x" onclick="closeOv('ov-inv')">✕</button></div>
+  <div class="inv-kpis">
+    <div class="kpi" style="--c:var(--gold-g)"><small>Total Value</small><b id="iv-total" style="color:var(--gold)">0</b></div>
+    <div class="kpi" style="--c:var(--brand-g)"><small>Pets</small><b id="iv-pets">0</b></div>
+    <div class="kpi" style="--c:rgba(95,212,255,.3)"><small>Gem Balance</small><b id="iv-gems" style="color:var(--r-gems)">0</b></div>
+  </div>
+  <div class="inv">
+    <div class="inv-cats" id="inv-cats"></div>
+    <div class="inv-main">
+      <div class="tools"><input class="inp" placeholder="Search…" id="inv-q" oninput="renderInv()"><select class="inp" id="inv-sort" onchange="renderInv()"><option value="hi">Value: High → Low</option><option value="lo">Value: Low → High</option><option value="az">Name A–Z</option></select></div>
+      <div class="picker" id="inv-grid"></div>
+    </div>
+  </div>
+  <div class="md-f"><div class="grow"></div><button class="btn btn-s" onclick="closeOv('ov-inv');openWd()">Withdraw</button><button class="btn btn-g" onclick="closeOv('ov-inv');openDep()">Deposit</button></div>
+</div></div>
+
+<!-- ═════════ DEPOSIT ═════════ -->
+<div class="ov" id="ov-dep"><div class="md">
+  <div class="dep-hero"><h3>Deposit Items</h3><p>Deposit your PS99 pets & gems in seconds.</p><div class="big">📥</div></div>
+  <div class="md-b">
+    <button class="btn btn-s" style="width:100%;justify-content:center;margin-bottom:14px" onclick="openValues()">🔍 Check Pet Values</button>
+    <div class="bots" id="dep-bots"></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><b>Join</b><small>the bot's server</small></div>
+      <div class="step"><div class="num">2</div><b>Send a trade</b><small>add your pets & confirm</small></div>
+      <div class="step"><div class="num">3</div><b>Receive</b><small>balance on site</small></div>
+    </div>
+    <div class="warn"><span>🔒</span><span>Beware of bot impersonators — the username must match <b>exactly</b> what's shown above.</span></div>
+    <div class="dev"><b>🧪 Test mode</b><p>Trade bots aren't connected yet. Add test pets to your inventory to try every game.</p><button class="btn btn-p btn-sm" onclick="addTestItems()">Add test pets</button></div>
+  </div>
+</div></div>
+
+<!-- ═════════ WITHDRAW ═════════ -->
+<div class="ov" id="ov-wd"><div class="md wide">
+  <div class="md-h"><div><h3>Withdraw Items</h3><p>Select items, then a bot will trade them to you in-game</p></div><button class="x" onclick="closeOv('ov-wd')">✕</button></div>
+  <div class="md-b">
+    <div id="wd-pending"></div>
+    <div class="tools"><input class="inp" placeholder="Search…" id="wd-q" oninput="renderWd()"><button class="btn btn-s btn-sm" onclick="wdClear()">Clear</button></div>
+    <div class="picker" id="wd-picker"></div>
+  </div>
+  <div class="md-f"><div class="sum">Selected: <b id="wd-sum">0</b> · <span id="wd-n">0</span> items</div><button class="btn btn-s" onclick="closeOv('ov-wd')">Cancel</button><button class="btn btn-p" onclick="confirmWd()">Withdraw</button></div>
+</div></div>
+
+<!-- ═════════ WITHDRAW BOT ═════════ -->
+<div class="ov" id="ov-wdbot"><div class="md">
+  <div class="dep-hero wd"><h3>Withdraw Ready</h3><p id="wdbot-sub">Join a bot to receive your items.</p><div class="big">📤</div></div>
+  <div class="md-b">
+    <div class="bots" id="wd-bots"></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><b>Join</b><small>the bot's server</small></div>
+      <div class="step"><div class="num">2</div><b>Accept trade</b><small>from the bot</small></div>
+      <div class="step"><div class="num">3</div><b>Done</b><small>items in-game</small></div>
+    </div>
+    <div class="warn"><span>🔒</span><span>Only accept trades from the exact bot usernames above. Withdrawals stay pending until the trade completes — you can cancel from the Withdraw window.</span></div>
+  </div>
+  <div class="md-f"><div class="grow"></div><button class="btn btn-s" onclick="closeOv('ov-wdbot')">Close</button></div>
+</div></div>
+
+<!-- ═════════ VALUES ═════════ -->
+<div class="ov" id="ov-vals"><div class="md wide">
+  <div class="md-h"><div><h3>Pet Values</h3><p>Current site values for every supported pet</p></div><button class="x" onclick="closeOv('ov-vals')">✕</button></div>
+  <div class="md-b"><div class="tools"><input class="inp" placeholder="Search pets…" id="vals-q" oninput="renderValues()"></div><div class="picker" id="vals-grid" style="max-height:480px"></div></div>
+</div></div>
+
+<!-- ═════════ PROFILE ═════════ -->
+<div class="ov" id="ov-prof"><div class="md">
+  <div class="md-h"><div><h3>Profile</h3><p>Your account settings</p></div><button class="x" onclick="closeOv('ov-prof')">✕</button></div>
+  <div class="md-b">
+    <div class="rbx-card" id="pf-card"></div>
+    <div class="form-row"><label>Client seed</label><div style="display:flex;gap:8px"><input class="inp" id="pf-seed" maxlength="64"><button class="btn btn-s btn-sm" onclick="document.getElementById('pf-seed').value=randHex(8)">Randomize</button></div></div>
+    <div class="form-row"><label>Next nonce</label><div class="fair" style="margin:0" id="pf-nonce">0</div></div>
+  </div>
+  <div class="md-f"><button class="btn btn-r btn-sm" onclick="unlink()">Unlink account</button><button class="btn btn-s btn-sm" onclick="resetAll()">Reset data</button><div class="grow"></div><button class="btn btn-p" onclick="saveProfile()">Save</button></div>
+</div></div>
+
+<!-- ═════════ LINK ROBLOX ═════════ -->
+<div class="ov" id="ov-link"><div class="md">
+  <div class="md-h"><div><h3>Link your Roblox account</h3><p id="lk-sub">Step 1 of 2 — who are you on Roblox?</p></div><button class="x" onclick="closeOv('ov-link')">✕</button></div>
+  <div class="md-b">
+    <div class="lk-step on" id="lk-1">
+      <div class="form-row"><label>Roblox username</label><input class="inp" id="lk-user" style="flex:none;height:46px;font-size:15px" maxlength="20" placeholder="e.g. Builderman" onkeydown="if(event.key==='Enter')linkStart()"></div>
+      <p style="font-size:12px;color:var(--mute);line-height:1.6">We'll give you a phrase to put in your Roblox bio. That proves the account is yours — no password, ever.</p>
+      <div class="err" id="lk-err1"></div>
+      <div class="dev" id="lk-dev" style="display:none"><b>🧪 Test mode</b><p>The verify server isn't connected yet (set <code>API_BASE</code>). Link as a test account to try the site.</p><button class="btn btn-p btn-sm" onclick="linkTest()">Link as test account</button></div>
+    </div>
+    <div class="lk-step" id="lk-2">
+      <div class="rbx-card" id="lk-card"></div>
+      <div class="lbl">Put this in your Roblox bio</div>
+      <div class="phrase"><code id="lk-phrase"></code><button class="btn btn-s btn-sm" onclick="copyPhrase()">Copy</button></div>
+      <div class="how">
+        <div><i>1</i><span>Open your <a id="lk-prof" target="_blank" rel="noopener" style="color:var(--brand2)">Roblox profile</a> → <b>About</b> → edit your <b>bio / description</b>.</span></div>
+        <div><i>2</i><span>Paste the phrase anywhere in your bio and press <b>Save</b>.</span></div>
+        <div><i>3</i><span>Come back and press <b>Verify</b>. You can remove it from your bio afterwards.</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--mute)">Phrase expires in <b id="lk-timer" style="font-family:var(--mono);color:var(--text)">10:00</b></div>
+      <div class="err" id="lk-err2"></div>
+    </div>
+    <div class="lk-step" id="lk-3" style="text-align:center">
+      <div class="ok-big">✓</div>
+      <h3 style="font-size:20px;margin-bottom:6px">Account linked</h3>
+      <p style="font-size:13px;color:var(--dim);margin-bottom:16px">Welcome, <b id="lk-done-name"></b>. You can remove the phrase from your bio now.</p>
+      <div class="rbx-card" id="lk-card3" style="text-align:left"></div>
+    </div>
+  </div>
+  <div class="md-f" id="lk-f1"><div class="grow"></div><button class="btn btn-s" onclick="closeOv('ov-link')">Cancel</button><button class="btn btn-p" id="lk-go1" onclick="linkStart()">Continue</button></div>
+  <div class="md-f" id="lk-f2" style="display:none"><button class="btn btn-s" onclick="linkBack()">← Not me</button><div class="grow"></div><button class="btn btn-g" id="lk-go2" onclick="linkCheck()">Verify bio</button></div>
+  <div class="md-f" id="lk-f3" style="display:none"><div class="grow"></div><button class="btn btn-g" onclick="closeOv('ov-link')">Let's go</button></div>
+</div></div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   CONFIG — edit these
+   ══════════════════════════════════════════════════════════════ */
+
+// Your trade bots. joinUrl = Roblox private server / profile link (optional)
+const BOTS = [
+  { name: 'Ps99_Water', online: true, joinUrl: '' },
+  { name: 'Ps99_Air',   online: true, joinUrl: '' },
+];
+
+// Pet catalogue — replace with real pets.
+// value is in gems. r = garg | titan | huge | exclusive | legendary | rare | gems
+// em can be an emoji, or set img:'https://…png' to use a pet image instead.
+const PETS = [
+  { id:'garg_scarecrow',  em:'🎃', name:'Gargantuan Scarecrow', value:40e12,  r:'garg' },
+  { id:'titan_dominus',   em:'🌈', name:'Titanic Dominus',      value:1.2e12, r:'titan' },
+  { id:'titan_star',      em:'⭐', name:'Titanic Star',         value:500e9,  r:'titan' },
+  { id:'huge_dragon',     em:'🐉', name:'Huge Dragon',          value:250e9,  r:'huge' },
+  { id:'huge_unicorn',    em:'🦄', name:'Huge Unicorn',         value:85e9,   r:'huge' },
+  { id:'huge_wolf',       em:'🐺', name:'Huge Wolf',            value:42e9,   r:'huge' },
+  { id:'huge_lion',       em:'🦁', name:'Huge Lion',            value:18e9,   r:'huge' },
+  { id:'huge_frog',       em:'🐸', name:'Huge Frog',            value:9.5e9,  r:'huge' },
+  { id:'ex_inferno',      em:'🔥', name:'Inferno Dragon',       value:3.1e9,  r:'exclusive' },
+  { id:'ex_frost',        em:'❄️', name:'Frost Phoenix',        value:1.4e9,  r:'exclusive' },
+  { id:'ex_agony',        em:'🌟', name:'Golden Agony',         value:750e6,  r:'exclusive' },
+  { id:'leg_butterfly',   em:'🦋', name:'Butterfly',            value:280e6,  r:'legendary' },
+  { id:'leg_pumpkin',     em:'🐱', name:'Pumpkin Cat',          value:120e6,  r:'legendary' },
+  { id:'rare_corgi',      em:'⚡', name:'Thunder Corgi',        value:45e6,   r:'rare' },
+  { id:'rare_blossom',    em:'🌸', name:'Cherry Blossom',       value:20e6,   r:'rare' },
+];
+
+// Verify server URL. Leave '' when server.js serves this page (same site). Test mode turns on automatically if no server answers.
+const API_BASE = '';
+let API_ON = false;
+
+const UPGRADE_EDGE = 0.05;   // 5% house edge on upgrader
+const UPGRADE_MAX  = 0.80;   // max upgrade chance
+const JP_TIMER     = 20;     // seconds once 2+ players
+const CF_TAX       = 0;      // coinflip tax on winnings (0.05 = 5%)
+
+/* ══════════════════════════════════════════════════════════════ */
+
+const RARITY = {
+  garg:{label:'Gargantuan',c:'var(--r-garg)'}, titan:{label:'Titanic',c:'var(--r-titan)'},
+  huge:{label:'Huge',c:'var(--r-huge)'}, exclusive:{label:'Exclusive',c:'var(--r-exclusive)'},
+  legendary:{label:'Legendary',c:'var(--r-legendary)'}, rare:{label:'Rare',c:'var(--r-rare)'},
+  gems:{label:'Gems',c:'var(--r-gems)'}
+};
+const PCOL = ['#7c5cff','#ffc83d','#2ee59d','#ff4d6d','#3d8bff','#ff4fd8','#ff8a3d','#5fd4ff'];
+const GEM = '<svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>';
+const PET = Object.fromEntries(PETS.map(p=>[p.id,p]));
+const $ = id => document.getElementById(id);
+
+/* ── STATE ── */
+const KEY = 'petflip_v2';
+function fresh(){ return {user:null, session:'', inv:[], flips:[], pending:[], hist:[], clientSeed:randHex(8), nonce:0, uid:1, escrow:[]}; }
+let S = load();
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.inv) return s; }catch(e){} return fresh(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+// refund anything stuck in a jackpot from a previous session
+if(S.escrow && S.escrow.length){ S.inv.push(...S.escrow); S.escrow=[]; save(); }
+
+/* ── UTIL ── */
+function randHex(n){ const a=new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+async function sha256(s){
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function newRound(){ const server = randHex(32); return { server, hash: await sha256(server) }; }
+async function rollFrom(server, client, nonce){ const h = await sha256(server+':'+client+':'+nonce); return parseInt(h.slice(0,13),16)/2**52; }
+async function roll(round){ const nonce=S.nonce++; const r=await rollFrom(round.server,S.clientSeed,nonce); save(); return {...round, client:S.clientSeed, nonce, r}; }
+
+function fmt(v){
+  const u=[[1e12,'T'],[1e9,'B'],[1e6,'M'],[1e3,'K']];
+  for(const [d,s] of u) if(v>=d){ const n=v/d; return parseFloat(n.toFixed(n>=100?0:n>=10?1:2)).toString()+s; }
+  return Math.round(v).toString();
+}
+const gv = v => GEM + fmt(v);
+const sumv = items => items.reduce((s,i)=>s+i.value,0);
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function mkItem(petId){ const p=PET[petId]; return {uid:S.uid++, pid:p.id, name:p.name, em:p.em, img:p.img||'', value:p.value, r:p.r}; }
+function mkGems(v){ return {uid:S.uid++, pid:'gems', name:'Gems', em:'💎', img:'', value:Math.round(v), r:'gems'}; }
+function icon(i){ return i.img ? `<img src="${esc(i.img)}" style="width:38px;height:38px;object-fit:contain">` : i.em; }
+function userName(){ return S.user ? (S.user.displayName || S.user.name) : 'Guest'; }
+function avaInner(){ return S.user && S.user.avatar ? `<img src="${esc(S.user.avatar)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : esc(initial(userName())); }
+function requireLink(){ if(S.user) return true; toast('Link your Roblox account first'); openLink(); return false; }
+function initial(n){ return (n||'?').trim().charAt(0).toUpperCase(); }
+function ago(t){ const s=(Date.now()-t)/1000; if(s<60) return 'just now'; if(s<3600) return Math.floor(s/60)+'m ago'; if(s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+
+function toast(msg, kind=''){
+  const t=document.createElement('div'); t.className='toast '+kind; t.textContent=msg;
+  $('toasts').appendChild(t); setTimeout(()=>t.remove(), 3500);
+}
+function openOv(id){ $(id).classList.add('on'); }
+function closeOv(id){ $(id).classList.remove('on'); }
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('mousedown',e=>{ if(e.target===o && !o.dataset.lock) o.classList.remove('on'); }));
+
+function tileHTML(i, opts={}){
+  const sel = opts.sel ? ' sel':''; const dis = opts.dis ? ' dis':'';
+  const click = opts.click ? ` onclick="${opts.click}"` : '';
+  return `<div class="tile r-${i.r}${sel}${dis}"${click}>
+    <span class="rar">${RARITY[i.r]?.label||''}</span><div class="chk">✓</div>
+    <div class="em">${icon(i)}</div><div class="nm" title="${esc(i.name)}">${esc(i.name)}</div><div class="vl">${gv(i.value)}</div></div>`;
+}
+function chipsHTML(items, max=6){
+  const sorted=[...items].sort((a,b)=>b.value-a.value);
+  const out = sorted.slice(0,max).map(i=>`<div class="chip r-${i.r}" title="${esc(i.name)} · ${fmt(i.value)}">${i.img?`<img src="${esc(i.img)}" style="width:22px;height:22px;object-fit:contain">`:i.em}</div>`);
+  if(sorted.length>max) out.push(`<div class="chip more">+${sorted.length-max}</div>`);
+  return out.join('');
+}
+function emptyHTML(ic, h, p, btn){ return `<div class="empty"><div class="ic">${ic}</div><h3>${h}</h3><p>${p}</p>${btn||''}</div>`; }
+function filt(items, q){ q=(q||'').toLowerCase(); return items.filter(i=>!q||i.name.toLowerCase().includes(q)); }
+
+/* ── ROUTER ── */
+const PAGES = {
+  coinflip:['Coinflip','Double your pets, 50/50'], jackpot:['Jackpot','Biggest pot wins it all'],
+  upgrader:['Upgrader','Turn small pets into big ones'], history:['History','Your games & verification'],
+  fair:['Provably Fair','Verify every result'], faq:['FAQ','Deposits, withdrawals & more']
+};
+function go(p){
+  if(!PAGES[p]) p='coinflip';
+  document.querySelectorAll('.page').forEach(e=>e.classList.toggle('on', e.id==='p-'+p));
+  document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('on', e.dataset.p===p));
+  $('pg-title').textContent=PAGES[p][0]; $('pg-sub').textContent=PAGES[p][1];
+  if(location.hash!=='#'+p) history.replaceState(null,'','#'+p);
+  render();
+}
+
+/* ── GLOBAL RENDER ── */
+function render(){
+  $('top-bal').innerHTML = gv(sumv(S.inv));
+  $('top-ava').innerHTML=avaInner(); $('top-ava').style.display=S.user?'':'none'; $('top-link').style.display=S.user?'none':'';
+  $('pill-cf').textContent = S.flips.length;
+  renderKpis(); renderFlips(); renderJp(); renderUpInv(); renderUpTargets(); updUp(); renderHist();
+}
+function stats(){
+  const w=S.hist.reduce((s,h)=>s+h.wager,0), p=S.hist.reduce((s,h)=>s+(h.payout-h.wager),0);
+  const wins=S.hist.filter(h=>h.win).length;
+  return {w,p,games:S.hist.length,wins};
+}
+function renderKpis(){
+  const st=stats();
+  const html=`
+    <div class="kpi" style="--c:var(--gold-g)"><small>Inventory Value</small><b style="color:var(--gold)">${gv(sumv(S.inv))}</b></div>
+    <div class="kpi"><small>Total Wagered</small><b>${gv(st.w)}</b></div>
+    <div class="kpi" style="--c:${st.p>=0?'var(--win-g)':'var(--lose-g)'}"><small>Profit</small><b class="${st.p>=0?'up':'dn'}">${st.p>=0?'+':'−'}${fmt(Math.abs(st.p))}</b></div>
+    <div class="kpi" style="--c:rgba(61,139,255,.3)"><small>Games / Wins</small><b>${st.games} <span style="color:var(--mute);font-size:15px">/ ${st.wins}</span></b></div>`;
+  $('kpis').innerHTML=html; $('kpis2').innerHTML=html;
+}
+
+/* ══════════════ COINFLIP ══════════════ */
+let crSide='h', crSel=new Set();
+function openCreate(){
+  if(!requireLink()) return;
+  if(!S.inv.length){ toast('Your inventory is empty — deposit first','bad'); openDep(); return; }
+  crSel.clear(); pickSide('h'); $('cr-q').value=''; renderCreatePicker(); openOv('ov-create');
+}
+function pickSide(s){ crSide=s; $('so-h').classList.toggle('on',s==='h'); $('so-t').classList.toggle('on',s==='t'); }
+function renderCreatePicker(){
+  const items=filt(S.inv,$('cr-q').value).sort((a,b)=>b.value-a.value);
+  $('cr-picker').innerHTML = items.length ? `<div class="tiles">${items.map(i=>tileHTML(i,{sel:crSel.has(i.uid),click:`crTog(${i.uid})`})).join('')}</div>` : emptyHTML('🔍','No items','Nothing matches your search.');
+  const sel=S.inv.filter(i=>crSel.has(i.uid));
+  $('cr-sum').innerHTML=gv(sumv(sel)); $('cr-n').textContent=sel.length; $('cr-go').disabled=!sel.length;
+}
+function crTog(uid){ crSel.has(uid)?crSel.delete(uid):crSel.add(uid); renderCreatePicker(); }
+function crSelAll(){ filt(S.inv,$('cr-q').value).forEach(i=>crSel.add(i.uid)); renderCreatePicker(); }
+function crClear(){ crSel.clear(); renderCreatePicker(); }
+async function createFlip(){
+  const items=S.inv.filter(i=>crSel.has(i.uid)); if(!items.length) return;
+  S.inv=S.inv.filter(i=>!crSel.has(i.uid));
+  const round=await newRound();
+  S.flips.unshift({id:Date.now(), side:crSide, items, value:sumv(items), t:Date.now(), round});
+  save(); closeOv('ov-create'); render(); toast('Flip created — waiting for an opponent','ok');
+}
+function cancelFlip(id){
+  const f=S.flips.find(x=>x.id===id); if(!f) return;
+  S.inv.push(...f.items); S.flips=S.flips.filter(x=>x.id!==id); save(); render(); toast('Flip cancelled — items returned');
+}
+function renderFlips(){
+  $('cf-count').textContent=S.flips.length;
+  if(!S.flips.length){
+    $('flips').innerHTML = emptyHTML('🪙','No open flips','Create a flip with your pets. Another player can join it — or call the bot to play instantly.',
+      `<button class="btn btn-y" onclick="openCreate()">Create Flip</button>`);
+    return;
+  }
+  const n=userName();
+  $('flips').innerHTML = S.flips.map(f=>{
+    const lo=f.value*0.95, hi=f.value*1.05; const opp=f.side==='h'?'t':'h';
+    return `<div class="flip">
+      <div class="who"><div class="ava you">${avaInner()}<span class="side-dot" style="background:var(--${f.side==='h'?'heads':'tails'});color:${f.side==='h'?'#5a3d00':'#fff'}">${f.side.toUpperCase()}</span></div><div style="min-width:0"><div class="n">${esc(n)}</div><div class="s">${ago(f.t)}</div></div></div>
+      <div class="chips">${chipsHTML(f.items)}</div>
+      <div class="mid"><div class="v">${gv(f.value)}</div><div class="vs">VS</div><div class="range">${fmt(lo)} – ${fmt(hi)}</div></div>
+      <div class="chips r"><span style="font-size:12px;color:var(--mute)">Waiting for opponent…</span></div>
+      <div class="acts"><button class="btn btn-r btn-sm" onclick="cancelFlip(${f.id})">Cancel</button><button class="btn btn-p btn-sm" onclick="callBotFlip(${f.id})">🤖 Call Bot</button></div>
+    </div>`;
+  }).join('');
+}
+
+// House bot builds a stake matching the value using catalogue pets + gems for the remainder
+function botStake(target){
+  const out=[]; let rem=target;
+  const sorted=[...PETS].sort((a,b)=>b.value-a.value);
+  for(const p of sorted){ while(p.value<=rem && out.length<8){ out.push(mkItem(p.id)); rem-=p.value; } }
+  if(rem>0.5) out.push(mkGems(rem));
+  return out;
+}
+
+let busy=false;
+async function callBotFlip(id){
+  if(busy) return; const f=S.flips.find(x=>x.id===id); if(!f) return;
+  busy=true;
+  const botItems=botStake(f.value);
+  S.flips=S.flips.filter(x=>x.id!==id);
+  const fair=await roll(f.round);
+  const landed = fair.r<0.5 ? 'h':'t';
+  const won = landed===f.side;
+  const pot=[...f.items,...botItems]; const potV=sumv(pot);
+  save();
+
+  // room UI
+  const n=userName(), opp=f.side==='h'?'t':'h';
+  const sideHTML=(name,cls,side,items)=>`<div class="ava ${cls}">${cls==='bot'?'🤖':avaInner()}<span class="side-dot" style="background:var(--${side==='h'?'heads':'tails'});color:${side==='h'?'#5a3d00':'#fff'}">${side.toUpperCase()}</span></div><div class="n">${esc(name)}</div><div class="v">${gv(sumv(items))}</div><div class="chips">${chipsHTML(items,8)}</div>`;
+  $('rs-a').className='room-side'; $('rs-b').className='room-side';
+  $('rs-a').innerHTML=sideHTML(n,'you',f.side,f.items);
+  $('rs-b').innerHTML=sideHTML('PetFlip Bot','bot',opp,botItems);
+  $('room-title').textContent='Coinflip · '+fmt(potV)+' pot';
+  $('room-sub').textContent='Server seed hash: '+fair.hash.slice(0,24)+'…';
+  $('room-res').className='result'; $('room-res').textContent='';
+  $('room-fair').innerHTML='<b>Hash</b> '+fair.hash+'<br><b>Client seed</b> '+esc(fair.client)+' · <b>Nonce</b> '+fair.nonce+'<br><b>Server seed</b> revealed after flip';
+  $('ov-room').dataset.lock='1'; $('room-x').style.visibility='hidden';
+  openOv('ov-room');
+
+  const coin=$('coin');
+  coin.style.transition='none'; coin.style.transform='rotateY(0deg)'; void coin.offsetWidth;
+  // 3-2-1 then flip
+  for(const c of ['3','2','1']){ $('room-res').textContent=c; $('room-res').className='result'; await sleep(600); }
+  $('room-res').textContent='';
+  const spins=8*360 + (landed==='h'?0:180);
+  coin.style.transition='transform 3.2s cubic-bezier(.15,.75,.25,1)';
+  coin.style.transform=`rotateY(${spins}deg)`;
+  await sleep(3300);
+
+  const payoutItems = won ? applyTax(pot) : [];
+  if(won) S.inv.push(...payoutItems);
+  const payout=sumv(payoutItems);
+  $(won?'rs-a':'rs-b').classList.add('won'); $(won?'rs-b':'rs-a').classList.add('lost');
+  $('room-res').className='result '+(won?'w':'l');
+  $('room-res').textContent = (landed==='h'?'Heads':'Tails')+' — '+(won?'You won '+fmt(payout)+'!':'You lost');
+  $('room-fair').innerHTML='<b>Server seed</b> '+fair.server+'<br><b>Hash</b> '+fair.hash+'<br><b>Client seed</b> '+esc(fair.client)+' · <b>Nonce</b> '+fair.nonce+' · <b>Roll</b> '+fair.r.toFixed(8)+' ('+(fair.r<0.5?'< 0.5 = Heads':'≥ 0.5 = Tails')+')';
+  addHist('Coinflip', f.value, payout, won, (f.side==='h'?'Heads':'Tails')+' vs bot', fair);
+  delete $('ov-room').dataset.lock; $('room-x').style.visibility='visible';
+  busy=false; render();
+  toast(won?'You won the flip! +'+fmt(payout):'Unlucky — the bot won this one', won?'ok':'bad');
+}
+function applyTax(items){
+  if(!CF_TAX) return items;
+  const v=sumv(items)*CF_TAX; // take gems first, else drop lowest items up to tax
+  let rem=v; const sorted=[...items].sort((a,b)=>a.value-b.value); const keep=[];
+  for(const i of sorted){ if(rem>0 && i.value<=rem){ rem-=i.value; } else keep.push(i); }
+  return keep;
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ══════════════ JACKPOT ══════════════ */
+let JP={entries:[], state:'open', ends:0, round:null, timer:null};
+let jpSel=new Set();
+function openJpJoin(){
+  if(!requireLink()) return;
+  if(JP.state!=='open'&&JP.state!=='count'){ toast('Round is rolling — wait for the next one'); return; }
+  if(!S.inv.length){ toast('Your inventory is empty — deposit first','bad'); openDep(); return; }
+  jpSel.clear(); $('jp-q').value=''; renderJpPicker(); openOv('ov-jp');
+}
+function renderJpPicker(){
+  const items=filt(S.inv,$('jp-q').value).sort((a,b)=>b.value-a.value);
+  $('jp-picker').innerHTML=items.length?`<div class="tiles">${items.map(i=>tileHTML(i,{sel:jpSel.has(i.uid),click:`jpTog(${i.uid})`})).join('')}</div>`:emptyHTML('🔍','No items','Nothing matches.');
+  $('jp-sum').innerHTML=gv(sumv(S.inv.filter(i=>jpSel.has(i.uid))));
+}
+function jpTog(uid){ jpSel.has(uid)?jpSel.delete(uid):jpSel.add(uid); renderJpPicker(); }
+async function jpJoin(){
+  const items=S.inv.filter(i=>jpSel.has(i.uid)); if(!items.length){ toast('Pick at least one item','bad'); return; }
+  if(!JP.round) JP.round=await newRound();
+  S.inv=S.inv.filter(i=>!jpSel.has(i.uid)); S.escrow.push(...items); save();
+  let me=JP.entries.find(e=>e.you);
+  if(me) me.items.push(...items); else JP.entries.push({you:true,name:userName(),items,col:PCOL[JP.entries.length%PCOL.length]});
+  closeOv('ov-jp'); jpCheckStart(); render(); toast('You joined the pot','ok');
+}
+function jpCallBot(){
+  const me=JP.entries.find(e=>e.you);
+  if(!me){ toast('Join the pot first, then call the bot'); return; }
+  if(JP.state==='roll'){ return; }
+  if(JP.entries.some(e=>e.bot)){ toast('The bot is already in this round'); return; }
+  JP.entries.push({bot:true,name:'PetFlip Bot',items:botStake(sumv(me.items)),col:PCOL[JP.entries.length%PCOL.length]});
+  jpCheckStart(); render(); toast('🤖 Bot joined the pot');
+}
+function jpCheckStart(){
+  if(JP.entries.length>=2 && JP.state==='open'){
+    JP.state='count'; JP.ends=Date.now()+JP_TIMER*1000;
+    JP.timer=setInterval(()=>{ if(Date.now()>=JP.ends){ clearInterval(JP.timer); jpRoll(); } else renderJpTimer(); },250);
+  }
+}
+function renderJpTimer(){
+  if(JP.state==='count'){ $('jp-state').textContent='Rolling in'; $('jp-time').textContent=Math.ceil((JP.ends-Date.now())/1000)+'s'; }
+  else if(JP.state==='roll'){ $('jp-state').textContent='Rolling'; $('jp-time').textContent='🎲'; }
+  else { $('jp-state').textContent = JP.entries.length ? 'Waiting for 2nd player' : 'Waiting for players'; $('jp-time').textContent='--'; }
+}
+function renderJp(){
+  const pot=JP.entries.reduce((s,e)=>s+sumv(e.items),0);
+  const cnt=JP.entries.reduce((s,e)=>s+e.items.length,0);
+  $('jp-pot').innerHTML=gv(pot); $('jp-items').textContent=cnt; $('jp-ecount').textContent=JP.entries.length;
+  renderJpTimer();
+  $('jp-bar').innerHTML=JP.entries.map(e=>`<div style="width:${pot?sumv(e.items)/pot*100:0}%;background:${e.col}"></div>`).join('');
+  $('jp-entries').innerHTML = JP.entries.length ? JP.entries.map(e=>{
+    const v=sumv(e.items);
+    return `<div class="entry" style="--pc:${e.col}"><div class="ava ${e.bot?'bot':'you'}" style="width:36px;height:36px;font-size:13px">${e.bot?'🤖':avaInner()}</div><div style="min-width:0"><div class="n">${esc(e.name)}</div><div class="s">${gv(v)} · ${e.items.length} items</div></div><div class="chips" style="margin-left:12px">${chipsHTML(e.items,5)}</div><div class="pct" style="color:${e.col}">${(pot?v/pot*100:0).toFixed(2)}%</div></div>`;
+  }).join('') : emptyHTML('🎰','Pot is empty','Be the first one in. Your chance equals your share of the pot.');
+  if(JP.state!=='roll') buildStripIdle();
+  $('jp-join').disabled = JP.state==='roll';
+  $('jp-bot').disabled = JP.state==='roll';
+}
+function buildStripIdle(){
+  const st=$('jp-strip');
+  if(!JP.entries.length){ st.style.transition='none'; st.style.transform='none'; st.innerHTML=Array.from({length:20},()=>`<div class="stile" style="--pc:var(--line2)"><div class="ava open" style="width:38px;height:38px">?</div></div>`).join(''); return; }
+  st.style.transition='none'; st.style.transform='none';
+  st.innerHTML=Array.from({length:20},(_,k)=>stileHTML(JP.entries[k%JP.entries.length])).join('');
+}
+function stileHTML(e){ return `<div class="stile" style="--pc:${e.col}"><div class="ava ${e.bot?'bot':'you'}">${e.bot?'🤖':avaInner()}</div>${esc(e.name.slice(0,10))}</div>`; }
+function pickWeighted(entries, x){ let acc=0; const tot=entries.reduce((s,e)=>s+sumv(e.items),0); for(const e of entries){ acc+=sumv(e.items)/tot; if(x<acc) return e; } return entries[entries.length-1]; }
+async function jpRoll(){
+  JP.state='roll'; render();
+  const fair=await roll(JP.round);
+  const winner=pickWeighted(JP.entries, fair.r);
+  // build strip: 70 tiles, winner at index 60
+  const N=70, W=60, tw=90; // 84px + 6 gap
+  const tiles=[]; for(let k=0;k<N;k++) tiles.push(k===W?winner:pickWeighted(JP.entries,Math.random()));
+  const st=$('jp-strip'); st.style.transition='none'; st.style.transform='translateX(0)';
+  st.innerHTML=tiles.map(stileHTML).join(''); void st.offsetWidth;
+  const wrapW=st.parentElement.clientWidth;
+  const jitter=(Math.random()-.5)*60;
+  const x=-(W*tw + 42 - wrapW/2 + jitter);
+  st.style.transition='transform 6s cubic-bezier(.12,.8,.18,1)'; st.style.transform=`translateX(${x}px)`;
+  await sleep(6200);
+  const pot=JP.entries.flatMap(e=>e.items); const potV=sumv(pot);
+  const me=JP.entries.find(e=>e.you); const myV=me?sumv(me.items):0;
+  const won=!!winner.you;
+  if(won) S.inv.push(...pot);
+  if(me) S.escrow=S.escrow.filter(i=>!me.items.includes(i)); save();
+  if(me) addHist('Jackpot', myV, won?potV:0, won, (myV/potV*100).toFixed(2)+'% chance', fair);
+  $('jp-state').textContent='Winner'; $('jp-time').textContent=winner.name;
+  toast(won?'🏆 You won the jackpot! +'+fmt(potV):winner.name+' won the pot', won?'ok':'bad');
+  await sleep(3500);
+  JP={entries:[],state:'open',ends:0,round:null,timer:null}; render();
+}
+
+/* ══════════════ UPGRADER ══════════════ */
+let upSel=new Set(), upTarget=null, upBusy=false;
+function upInVal(){ return sumv(S.inv.filter(i=>upSel.has(i.uid))); }
+function upChance(){ const iv=upInVal(); if(!upTarget||!iv) return 0; return Math.min(UPGRADE_MAX, iv/upTarget.value*(1-UPGRADE_EDGE)); }
+function renderUpInv(){
+  if(upBusy) return;
+  for(const u of [...upSel]) if(!S.inv.find(i=>i.uid===u)) upSel.delete(u);
+  const items=filt(S.inv,$('up-q1').value).sort((a,b)=>b.value-a.value);
+  $('up-inv').innerHTML = S.inv.length ? (items.length?`<div class="tiles">${items.map(i=>tileHTML(i,{sel:upSel.has(i.uid),click:`upTog(${i.uid})`})).join('')}</div>`:emptyHTML('🔍','No items','Nothing matches.'))
+    : emptyHTML('📦','No items','Deposit pets to start upgrading.',`<button class="btn btn-g btn-sm" onclick="openDep()">Deposit</button>`);
+  $('up-sel-count').textContent=upSel.size+' selected';
+}
+function renderUpTargets(){
+  if(upBusy) return;
+  const iv=upInVal();
+  const items=filt(PETS,$('up-q2').value).sort((a,b)=>a.value-b.value);
+  $('up-tgts').innerHTML=`<div class="tiles">${items.map(p=>{
+    const ok = !iv || (p.value>iv*1.05 && iv/p.value*(1-UPGRADE_EDGE)>=0.01);
+    return tileHTML(p,{sel:upTarget&&upTarget.id===p.id,dis:!!iv&&!ok,click:`upPick('${p.id}')`});
+  }).join('')}</div>`;
+  $('up-tgt-name').textContent=upTarget?upTarget.name:'none';
+}
+function upTog(uid){ upSel.has(uid)?upSel.delete(uid):upSel.add(uid); const iv=upInVal(); if(upTarget && upTarget.value<=iv*1.05) upTarget=null; renderUpInv(); renderUpTargets(); updUp(); }
+function upPick(id){ upTarget=PET[id]; renderUpTargets(); updUp(); }
+function quickMult(m){
+  const iv=upInVal(); if(!iv){ toast('Select items first'); return; }
+  const want=iv*m; let best=null;
+  for(const p of PETS){ if(p.value<=iv*1.05) continue; if(!best||Math.abs(p.value-want)<Math.abs(best.value-want)) best=p; }
+  if(!best){ toast('No pet in the catalogue is worth more than your selection','bad'); return; }
+  upTarget=best; renderUpTargets(); updUp();
+}
+function updUp(){
+  if(upBusy) return;
+  const iv=upInVal(), ch=upChance();
+  $('up-in').innerHTML=gv(iv); $('up-out').innerHTML=upTarget?gv(upTarget.value):gv(0);
+  $('up-chance').textContent=(ch*100).toFixed(2)+'%';
+  $('up-mult').textContent=(upTarget&&iv?upTarget.value/iv:0).toFixed(2)+'x';
+  const C=2*Math.PI*122;
+  $('arc-win').setAttribute('stroke-dasharray',`${ch*C} ${C}`);
+  $('arc-lose').setAttribute('stroke-dasharray',`0 ${ch*C} ${(1-ch)*C} 0`);
+  $('up-go').disabled=!(iv&&upTarget&&ch>=0.01);
+}
+async function doUpgrade(){
+  if(!requireLink()) return;
+  if(upBusy) return; const iv=upInVal(), ch=upChance();
+  if(!iv||!upTarget||ch<0.01) return;
+  upBusy=true; $('up-go').disabled=true; $('up-res').textContent=''; $('up-res').className='up-res'; $('wheel').classList.remove('win');
+  const inputs=S.inv.filter(i=>upSel.has(i.uid)); const target=upTarget;
+  S.inv=S.inv.filter(i=>!upSel.has(i.uid)); S.escrow.push(...inputs); save();
+  const round=await newRound(); const fair=await roll(round);
+  const won=fair.r<ch;
+  const nd=$('needle'); nd.style.transition='none'; nd.style.transform='rotate(0deg)'; void nd.offsetWidth;
+  nd.style.transition='transform 4.5s cubic-bezier(.12,.8,.2,1)'; nd.style.transform=`rotate(${360*6+fair.r*360}deg)`;
+  await sleep(4700);
+  S.escrow=S.escrow.filter(i=>!inputs.includes(i));
+  let payout=0;
+  if(won){ S.inv.push(mkItem(target.id)); payout=target.value; $('wheel').classList.add('win'); }
+  addHist('Upgrader', iv, payout, won, (ch*100).toFixed(2)+'% → '+target.name, fair);
+  $('up-res').className='up-res '+(won?'w':'l');
+  $('up-res').textContent=won?'Upgraded to '+target.name+'!':'Upgrade failed';
+  toast(won?'⬆️ Upgrade success! '+target.name:'Upgrade failed — better luck next time', won?'ok':'bad');
+  upSel.clear(); upTarget=null; upBusy=false; render();
+}
+
+/* ══════════════ HISTORY ══════════════ */
+function addHist(game,wager,payout,win,detail,fair){
+  S.hist.unshift({game,wager,payout,win,detail,t:Date.now(),fair:{server:fair.server,hash:fair.hash,client:fair.client,nonce:fair.nonce,r:fair.r}});
+  if(S.hist.length>200) S.hist.length=200; save();
+}
+function renderHist(){
+  $('hist').innerHTML = S.hist.length ? S.hist.map((h,k)=>`<tr>
+    <td><b>${h.game}</b><div style="font-size:11px;color:var(--mute)">${esc(h.detail)}</div></td>
+    <td style="color:var(--dim)">${ago(h.t)}</td>
+    <td class="mono">${gv(h.wager)}</td>
+    <td class="mono" style="color:${h.win?'var(--win)':'var(--mute)'}">${gv(h.payout)}</td>
+    <td><span class="tag ${h.win?'w':'l'}">${h.win?'Win':'Loss'}</span></td>
+    <td class="mono" style="color:var(--dim)">${h.fair.r.toFixed(6)}</td>
+    <td><button class="btn btn-s btn-sm" onclick="verifyRow(${k})">Verify</button></td></tr>`).join('')
+    : `<tr><td colspan="7">${emptyHTML('🕓','No games yet','Your coinflips, jackpots and upgrades will show up here with full provably-fair data.')}</td></tr>`;
+}
+function verifyRow(k){ const f=S.hist[k].fair; $('v-server').value=f.server; $('v-client').value=f.client; $('v-nonce').value=f.nonce; go('fair'); verify(); }
+async function verify(){
+  const s=$('v-server').value.trim(), c=$('v-client').value.trim(), n=$('v-nonce').value.trim();
+  if(!s||!c||n===''){ $('v-out').textContent='Fill in all three fields.'; return; }
+  const hash=await sha256(s); const r=await rollFrom(s,c,n);
+  $('v-out').innerHTML=`<b>SHA256(server seed)</b> ${hash}<br><b>Roll</b> ${r.toFixed(10)}<br><b>Coinflip</b> ${r<0.5?'Heads':'Tails'}`;
+}
+
+/* ══════════════ INVENTORY ══════════════ */
+let invCat='all';
+function openInv(){ renderInv(); openOv('ov-inv'); }
+function renderInv(){
+  $('inv-name').textContent=userName(); $('inv-ava').innerHTML=avaInner();
+  $('iv-total').innerHTML=gv(sumv(S.inv)); $('iv-pets').textContent=S.inv.filter(i=>i.r!=='gems').length;
+  $('iv-gems').innerHTML=gv(sumv(S.inv.filter(i=>i.r==='gems')));
+  const cats=[['all','All Items'],['garg','Gargantuans'],['titan','Titanics'],['huge','Huges'],['exclusive','Exclusives'],['legendary','Legendary'],['rare','Rare'],['gems','Gems']];
+  $('inv-cats').innerHTML=cats.map(([k,l])=>`<button class="cat${invCat===k?' on':''}" style="--rc:${k==='all'?'var(--text)':RARITY[k].c}" onclick="invCat='${k}';renderInv()"><i></i>${l}<span>${k==='all'?S.inv.length:S.inv.filter(i=>i.r===k).length}</span></button>`).join('');
+  let items=filt(S.inv,$('inv-q').value).filter(i=>invCat==='all'||i.r===invCat);
+  const so=$('inv-sort').value;
+  items.sort(so==='lo'?(a,b)=>a.value-b.value:so==='az'?(a,b)=>a.name.localeCompare(b.name):(a,b)=>b.value-a.value);
+  $('inv-grid').innerHTML = items.length?`<div class="tiles">${items.map(i=>tileHTML(i)).join('')}</div>`
+    : emptyHTML('📦', S.inv.length?'Nothing here':'Inventory empty', S.inv.length?'No items in this category.':'Deposit pets from Pet Simulator 99 to get started.', S.inv.length?'':`<button class="btn btn-g btn-sm" onclick="closeOv('ov-inv');openDep()">Deposit</button>`);
+}
+
+/* ══════════════ DEPOSIT / WITHDRAW ══════════════ */
+function botsHTML(){
+  return BOTS.map((b,k)=>`<div class="botrow">
+    <div class="ava bot">🤖</div>
+    <div style="flex:1;min-width:0"><div class="n">${esc(b.name)} <span class="dot${b.online?'':' off'}"></span></div><span class="t">DEPOSITS + WITHDRAWS</span></div>
+    <button class="btn btn-s btn-sm" onclick="copyBot(${k})">Copy</button>
+    <button class="btn btn-g btn-sm" ${b.online?'':'disabled'} onclick="joinBot(${k})">Join</button></div>`).join('');
+}
+function copyBot(k){ const n=BOTS[k].name; (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(()=>toast('Copied '+n,'ok')).catch(()=>toast('Username: '+n)); }
+function joinBot(k){ const b=BOTS[k]; if(b.joinUrl) window.open(b.joinUrl,'_blank','noopener'); else toast('Join '+b.name+' in Pet Simulator 99 and send a trade'); }
+function openDep(){ if(!requireLink()) return; $('dep-bots').innerHTML=botsHTML(); openOv('ov-dep'); }
+function addTestItems(){
+  if(!requireLink()) return;
+  const pool=PETS.filter(p=>p.r!=='garg');
+  const n=6+Math.floor(Math.random()*5);
+  for(let k=0;k<n;k++){ const p=pool[Math.floor(Math.random()*pool.length)]; S.inv.push(mkItem(p.id)); }
+  S.inv.push(mkGems(5e9)); save(); render(); toast('Added '+(n+1)+' test items to your inventory','ok');
+}
+let wdSel=new Set();
+function openWd(){ if(!requireLink()) return; wdSel.clear(); $('wd-q').value=''; renderWd(); openOv('ov-wd'); }
+function renderWd(){
+  $('wd-pending').innerHTML = S.pending.length ? `<div class="lbl">Pending withdrawals</div><div class="flips" style="margin-bottom:18px">${S.pending.map(p=>`<div class="botrow"><div class="chips" style="flex:1">${chipsHTML(p.items,8)}</div><div class="mono" style="color:var(--gold);font-weight:700;font-family:var(--mono)">${gv(sumv(p.items))}</div><span class="tag g">Pending</span><button class="btn btn-r btn-sm" onclick="cancelWd(${p.id})">Cancel</button></div>`).join('')}</div><div class="lbl">Your items</div>` : '';
+  const items=filt(S.inv,$('wd-q').value).sort((a,b)=>b.value-a.value);
+  $('wd-picker').innerHTML = items.length?`<div class="tiles">${items.map(i=>tileHTML(i,{sel:wdSel.has(i.uid),click:`wdTog(${i.uid})`})).join('')}</div>`:emptyHTML('📦','No items','Nothing to withdraw.');
+  const sel=S.inv.filter(i=>wdSel.has(i.uid)); $('wd-sum').innerHTML=gv(sumv(sel)); $('wd-n').textContent=sel.length;
+}
+function wdTog(uid){ wdSel.has(uid)?wdSel.delete(uid):wdSel.add(uid); renderWd(); }
+function wdClear(){ wdSel.clear(); renderWd(); }
+function confirmWd(){
+  const items=S.inv.filter(i=>wdSel.has(i.uid)); if(!items.length){ toast('Select items to withdraw','bad'); return; }
+  S.inv=S.inv.filter(i=>!wdSel.has(i.uid)); S.pending.unshift({id:Date.now(),items,t:Date.now()}); save();
+  closeOv('ov-wd'); $('wd-bots').innerHTML=botsHTML(); $('wdbot-sub').innerHTML=items.length+' items · '+gv(sumv(items))+' — join a bot to receive them.';
+  openOv('ov-wdbot'); render();
+}
+function cancelWd(id){ const p=S.pending.find(x=>x.id===id); if(!p) return; S.inv.push(...p.items); S.pending=S.pending.filter(x=>x.id!==id); save(); renderWd(); render(); toast('Withdrawal cancelled'); }
+
+function openValues(){ $('vals-q').value=''; renderValues(); openOv('ov-vals'); }
+function renderValues(){ const items=filt(PETS,$('vals-q').value).sort((a,b)=>b.value-a.value); $('vals-grid').innerHTML=`<div class="tiles">${items.map(p=>tileHTML(p)).join('')}</div>`; }
+
+/* ══════════════ PROFILE ══════════════ */
+function cardHTML(u){ return `<div class="pic">${u.avatar?`<img src="${esc(u.avatar)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:esc(initial(u.displayName||u.name))}</div><div style="min-width:0"><b>${esc(u.displayName||u.name)}</b><small>@${esc(u.name)}${u.id?' · ID '+u.id:''}${u.test?' · test account':''}</small>${u.id?`<div style="margin-top:6px"><a href="https://www.roblox.com/users/${u.id}/profile" target="_blank" rel="noopener" style="font-size:12px;color:var(--brand2);font-weight:600">View Roblox profile ↗</a></div>`:''}</div>`; }
+function openProfile(){ if(!S.user){ openLink(); return; } $('pf-card').innerHTML=cardHTML(S.user); $('pf-seed').value=S.clientSeed; $('pf-nonce').textContent=S.nonce; openOv('ov-prof'); }
+function saveProfile(){
+  const seed=$('pf-seed').value.trim(); if(seed && seed!==S.clientSeed){ S.clientSeed=seed; S.nonce=0; }
+  save(); closeOv('ov-prof'); render(); toast('Profile saved','ok');
+}
+function resetAll(){ if(!confirm('Reset inventory, flips and history?')) return; S=fresh(); save(); closeOv('ov-prof'); render(); toast('All data reset'); }
+
+/* ══════════════ LINK ROBLOX ══════════════ */
+let LK={token:'',phrase:'',user:null,expires:0,timer:null};
+async function api(path, opts={}){
+  const r = await fetch(API_BASE.replace(/\/$/,'')+path, {
+    method: opts.body?'POST':(opts.method||'GET'),
+    headers: {'content-type':'application/json', ...(S.session?{authorization:'Bearer '+S.session}:{})},
+    body: opts.body?JSON.stringify(opts.body):undefined
+  });
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok && !('ok' in j)) throw new Error(j.error||'Request failed ('+r.status+')');
+  return j;
+}
+function lkStep(n){
+  [1,2,3].forEach(k=>{ $('lk-'+k).classList.toggle('on',k===n); $('lk-f'+k).style.display=k===n?'':'none'; });
+  $('lk-sub').textContent = n===1?'Step 1 of 2 — who are you on Roblox?':n===2?'Step 2 of 2 — prove it\'s you':'All done';
+}
+function openLink(){
+  clearInterval(LK.timer); LK={token:'',phrase:'',user:null,expires:0,timer:null};
+  $('lk-user').value=''; $('lk-err1').textContent=''; $('lk-err2').textContent='';
+  $('lk-dev').style.display=API_ON?'none':'block';
+  lkStep(1); openOv('ov-link'); setTimeout(()=>$('lk-user').focus(),50);
+}
+async function linkStart(){
+  const u=$('lk-user').value.trim();
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(u)){ $('lk-err1').textContent='Enter a valid Roblox username (3–20 letters, numbers or _).'; return; }
+  if(!API_ON){ $('lk-err1').textContent='Verify server not connected — use test mode below for now.'; return; }
+  const b=$('lk-go1'); b.disabled=true; b.innerHTML='<span class="spin"></span> Looking up…'; $('lk-err1').textContent='';
+  try{
+    const j=await api('/api/link/start',{body:{username:u}});
+    if(j.error) throw new Error(j.error);
+    LK.token=j.token; LK.phrase=j.phrase; LK.user=j.user; LK.expires=j.expiresAt;
+    $('lk-card').innerHTML=cardHTML(j.user);
+    $('lk-phrase').textContent=j.phrase;
+    $('lk-prof').href='https://www.roblox.com/users/'+j.user.id+'/profile';
+    $('lk-err2').textContent='';
+    lkStep(2); tickLk(); LK.timer=setInterval(tickLk,1000);
+  }catch(e){ $('lk-err1').textContent=e.message||'Could not reach the verify server.'; }
+  b.disabled=false; b.textContent='Continue';
+}
+function tickLk(){
+  const r=Math.max(0,LK.expires-Date.now());
+  $('lk-timer').textContent=String(Math.floor(r/60000)).padStart(2,'0')+':'+String(Math.floor(r%60000/1000)).padStart(2,'0');
+  if(!r){ clearInterval(LK.timer); $('lk-err2').textContent='Phrase expired — go back and start again.'; $('lk-go2').disabled=true; }
+}
+function linkBack(){ clearInterval(LK.timer); lkStep(1); $('lk-go2').disabled=false; }
+function copyPhrase(){ (navigator.clipboard?navigator.clipboard.writeText(LK.phrase):Promise.reject()).then(()=>toast('Phrase copied','ok')).catch(()=>toast('Select the phrase and copy it manually')); }
+async function linkCheck(){
+  const b=$('lk-go2'); b.disabled=true; b.innerHTML='<span class="spin"></span> Checking bio…'; $('lk-err2').textContent='';
+  try{
+    const j=await api('/api/link/check',{body:{token:LK.token}});
+    if(!j.ok) throw new Error(j.error||'Phrase not found in your bio yet.');
+    clearInterval(LK.timer);
+    S.user=j.user; S.session=j.session; save();
+    linkDone();
+  }catch(e){ $('lk-err2').textContent=e.message; }
+  b.disabled=LK.expires<Date.now(); b.textContent='Verify bio';
+}
+function linkTest(){
+  const u=$('lk-user').value.trim();
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(u)){ $('lk-err1').textContent='Type a username first (3–20 letters, numbers or _).'; return; }
+  S.user={id:0,name:u,displayName:u,avatar:'',test:true}; S.session=''; save(); linkDone();
+}
+function linkDone(){
+  $('lk-done-name').textContent=userName(); $('lk-card3').innerHTML=cardHTML(S.user);
+  lkStep(3); render(); toast('Roblox account linked','ok');
+}
+async function unlink(){
+  if(!confirm('Unlink '+userName()+'? Your site inventory stays on this device.')) return;
+  if(API_ON && S.session){ try{ await api('/api/logout',{method:'POST',body:{}}); }catch(e){} }
+  S.user=null; S.session=''; save(); closeOv('ov-prof'); render(); toast('Account unlinked');
+}
+async function refreshMe(){
+  try{ const r=await fetch(API_BASE.replace(/\/$/,'')+'/api/health'); const j=await r.json(); API_ON=!!(j&&j.ok); }catch(e){ API_ON=false; }
+  if(!API_ON || !S.session) return;
+  try{ const j=await api('/api/me'); if(j.user){ S.user=j.user; save(); render(); } }
+  catch(e){ if(/Not linked/.test(e.message)){ S.user=null; S.session=''; save(); render(); toast('Session expired — link your account again'); } }
+}
+
+/* ══════════════ INIT ══════════════ */
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)));
+go(location.hash.slice(1)||'coinflip');
+refreshMe();
+setInterval(()=>{ if(document.querySelector('#p-coinflip.on')) renderFlips(); },30000);
+</script>
+</body>
+</html>
