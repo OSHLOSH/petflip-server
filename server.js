@@ -32,7 +32,7 @@ const TIERS = ['huge', 'titan', 'garg'];
 
 // ───────────────────────── storage ─────────────────────────
 function freshDb() {
-  return { seq: 1, pets: [], house: [], users: {}, sessions: {}, flips: [], withdraws: [], deposits: [] };
+  return { seq: 1, pets: [], house: [], users: {}, sessions: {}, flips: [], withdraws: [], deposits: [], ownerId: 0, staff: [] };
 }
 let db = freshDb();
 try { db = { ...freshDb(), ...JSON.parse(fs.readFileSync(DB_FILE, 'utf8')) }; } catch { /* first run */ }
@@ -171,9 +171,21 @@ function authUser(req) {
   return getUser(rec.userId) || null;
 }
 const safeEq = (a, b) => a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
-const isAdmin = req => ADMIN_KEY && safeEq(String(req.headers['x-admin-key'] || ''), ADMIN_KEY);
+// admin access: the owner key, OR a linked account that is the owner or assigned staff
+const failedKey = new Map();
+function keyOk(req) {
+  const k = String(req.headers['x-admin-key'] || ''); if (!k || !ADMIN_KEY) return false;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress;
+  const f = (failedKey.get(ip) || []).filter(t => Date.now() - t < 15 * 60000);
+  if (f.length >= 8) return false;                       // locked out for 15 min after 8 wrong keys
+  if (safeEq(k, ADMIN_KEY)) return true;
+  f.push(Date.now()); failedKey.set(ip, f); return false;
+}
+function roleOf(u) { if (!u) return null; if (db.ownerId && u.id === db.ownerId) return 'owner'; if ((db.staff || []).includes(u.id)) return 'staff'; return null; }
+const isOwner = req => keyOk(req) || roleOf(authUser(req)) === 'owner';
+const isAdmin = req => isOwner(req) || roleOf(authUser(req)) === 'staff';
 const isBot = req => BOT_KEY && safeEq(String(req.headers['x-bot-key'] || ''), BOT_KEY);
-function meView(u) { return { user: publicUser(u), inv: expand(u.inv), clientSeed: u.clientSeed, nonce: u.nonce, hist: u.hist.slice(0, 100), withdraws: db.withdraws.filter(w => w.userId === u.id && w.status === 'pending').map(w => ({ id: w.id, items: expand(w.items), t: w.t })) }; }
+function meView(u) { return { user: publicUser(u), role: roleOf(u), inv: expand(u.inv), clientSeed: u.clientSeed, nonce: u.nonce, hist: u.hist.slice(0, 100), withdraws: db.withdraws.filter(w => w.userId === u.id && w.status === 'pending').map(w => ({ id: w.id, items: expand(w.items), t: w.t })) }; }
 function catalog() {
   const counts = {}; for (const i of db.house) counts[i.pid] = (counts[i.pid] || 0) + 1;
   return db.pets.map(p => ({ ...p, stock: counts[p.id] || 0 }));
@@ -359,7 +371,32 @@ R('POST', '/api/bot/withdraw/complete', (req, b) => {
 R('GET', '/api/admin/state', (req) => {
   if (!isAdmin(req)) return [403, 'Wrong admin key.'];
   const users = Object.values(db.users).map(u => ({ ...publicUser(u), items: u.inv.length, value: sumv(u.inv) })).sort((a, b) => b.value - a.value).slice(0, 100);
-  return { ok: true, pets: catalog(), houseValue: sumv(db.house), houseItems: db.house.length, users, withdraws: db.withdraws.filter(w => w.status === 'pending').map(w => ({ id: w.id, username: w.username, userId: w.userId, items: expand(w.items), t: w.t })) };
+  return { ok: true, role: isOwner(req) ? 'owner' : 'staff', pets: catalog(), houseValue: sumv(db.house), houseItems: db.house.length, users, withdraws: db.withdraws.filter(w => w.status === 'pending').map(w => ({ id: w.id, username: w.username, userId: w.userId, items: expand(w.items), t: w.t })) };
+});
+// owner: bind your linked Roblox account as owner (needs the key once)
+R('POST', '/api/admin/claim', (req) => {
+  if (!keyOk(req)) return [403, 'Wrong admin key.'];
+  const u = authUser(req); if (!u) return [401, 'Link your Roblox account first, then unlock again.'];
+  db.ownerId = u.id; db.staff = (db.staff || []).filter(id => id !== u.id); save();
+  return { ok: true, role: 'owner' };
+});
+R('GET', '/api/admin/staff', (req) => {
+  if (!isOwner(req)) return [403, 'Only the owner can manage staff.'];
+  const owner = getUser(db.ownerId);
+  return { ok: true, owner: owner ? publicUser(owner) : null, staff: (db.staff || []).map(id => getUser(id)).filter(Boolean).map(publicUser) };
+});
+R('POST', '/api/admin/staff/add', (req, b) => {
+  if (!isOwner(req)) return [403, 'Only the owner can manage staff.'];
+  const user = Object.values(db.users).find(u => u.name.toLowerCase() === String(b.username || '').trim().toLowerCase());
+  if (!user) return [404, 'That player has not linked their account on the site yet.'];
+  if (user.id === db.ownerId) return [400, "That's you — you're the owner."];
+  db.staff = db.staff || []; if (!db.staff.includes(user.id)) db.staff.push(user.id); save();
+  return { ok: true };
+});
+R('POST', '/api/admin/staff/remove', (req, b) => {
+  if (!isOwner(req)) return [403, 'Only the owner can manage staff.'];
+  db.staff = (db.staff || []).filter(id => id !== Number(b.userId)); save();
+  return { ok: true };
 });
 R('POST', '/api/admin/pet', (req, b) => {
   if (!isAdmin(req)) return [403, 'Wrong admin key.'];
