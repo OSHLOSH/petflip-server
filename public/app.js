@@ -276,62 +276,94 @@ async function playFlip(f, asCreator){
   render();
 }
 
-/* ══════════════ JACKPOT (vs bot) ══════════════ */
-let JP={entries:[], state:'open'}, jpSel=new Set();
-function openJpJoin(){
-  if(!requireLink()) return;
-  if(JP.state==='roll'){ toast('Round is rolling — wait a moment'); return; }
-  if(!S.inv.length){ toast('Your inventory is empty — deposit first','bad'); openDep(); return; }
-  jpSel.clear(); $('jp-q').value=''; renderJpPicker(); openOv('ov-jp');
-}
+/* ══════════════ JACKPOT ══════════════ */
+let JP={entries:[], state:'open', locked:false}, jpSel=new Set();
 const jpMine = () => JP.entries.find(e=>e.you);
+const C_JP = 2*Math.PI*122;
+
 function renderJpPicker(){
+  if(!$('jp-picker')) return;
+  if(JP.locked){
+    $('jp-picker').innerHTML = emptyHTML('🔒','You\'re locked in','Wait for the round to roll.');
+    $('jp-sel-count').textContent='locked';
+    $('jp-sum').innerHTML='--';
+    return;
+  }
   const inPot=new Set((jpMine()?.items||[]).map(i=>i.uid));
-  const items=filt(S.inv.filter(i=>!inPot.has(i.uid)),$('jp-q').value).sort((a,b)=>b.value-a.value);
-  $('jp-picker').innerHTML=items.length?`<div class="tiles">${items.map(i=>tileHTML(i,{sel:jpSel.has(i.uid),click:`jpTog(${i.uid})`})).join('')}</div>`:emptyHTML('🔍','No items','Nothing left to add.');
+  const items=filt(S.inv.filter(i=>!inPot.has(i.uid)),$('jp-q').value||'').sort((a,b)=>b.value-a.value);
+  $('jp-picker').innerHTML=items.length
+    ?`<div class="tiles">${items.map(i=>tileHTML(i,{sel:jpSel.has(i.uid),click:`jpTog(${i.uid})`})).join('')}</div>`
+    : emptyHTML('🐾','No items','Deposit pets first.');
+  $('jp-sel-count').textContent=`${jpSel.size} selected`;
   $('jp-sum').innerHTML=gv(sumv(S.inv.filter(i=>jpSel.has(i.uid))));
 }
-function jpTog(uid){ jpSel.has(uid)?jpSel.delete(uid):jpSel.add(uid); renderJpPicker(); }
-function jpJoin(){
-  const items=S.inv.filter(i=>jpSel.has(i.uid)); if(!items.length){ toast('Pick at least one item','bad'); return; }
-  let me=jpMine(); if(me) me.items.push(...items); else JP.entries.push({you:true, u:S.user, name:userName(), items, col:PCOL[0]});
-  closeOv('ov-jp'); render(); toast('Added to the pot — call the bot to roll','ok');
+function jpTog(uid){
+  if(JP.locked) return;
+  jpSel.has(uid)?jpSel.delete(uid):jpSel.add(uid);
+  renderJpPicker();
 }
-async function jpCallBot(){
-  const me=jpMine(); if(!me){ toast('Join the pot first, then call the bot'); return; }
+function jpDoJoin(){
+  if(!requireLink()) return;
+  if(JP.state==='roll'){ toast('Round is rolling — wait a moment'); return; }
+  if(JP.locked){ toast('You\'re already in the pot','bad'); return; }
+  if(!S.inv.length){ toast('Your inventory is empty — deposit first','bad'); openDep(); return; }
+  const items=S.inv.filter(i=>jpSel.has(i.uid));
+  if(!items.length){ toast('Select at least one pet','bad'); return; }
+  JP.entries.push({you:true, u:S.user, name:userName(), items, col:PCOL[0]});
+  JP.locked=true;
+  jpSel.clear();
+  render();
+  toast('🔒 You\'re locked in — good luck!','ok');
+}
+async function jpRoll(){
+  const me=jpMine(); if(!me){ toast('No entries yet'); return; }
   if(JP.state==='roll') return;
   JP.state='roll'; render();
   try{
-    let won, fair, botItems;
+    let won, fair;
     if(SV()){
       const j=await api('/api/jackpot/bot',{body:{uids:me.items.map(i=>i.uid)}});
-      syncMe(j); won=j.won; fair=j.fair; botItems=j.botItems.map(nItem);
+      syncMe(j); won=j.won; fair=j.fair;
     } else {
-      botItems=botStake(sumv(me.items)); const myV=sumv(me.items), bV=sumv(botItems);
+      const myV=sumv(me.items), potV=JP.entries.reduce((s,e)=>s+sumv(e.items),0);
       const ids=new Set(me.items.map(i=>i.uid)); S.inv=S.inv.filter(i=>!ids.has(i.uid));
-      fair=await roll(await newRound()); won=fair.r<myV/(myV+bV);
-      if(won) S.inv.push(...me.items,...botItems);
-      addHistLocal('Jackpot', myV, won?myV+bV:0, won, (myV/(myV+bV)*100).toFixed(2)+'% chance vs bot', fair); save();
+      fair=await roll(await newRound()); won=fair.r<myV/potV;
+      if(won){ JP.entries.forEach(e=>{ if(!e.you) S.inv.push(...e.items); }); S.inv.push(...me.items); }
+      addHistLocal('Jackpot', myV, won?potV:0, won, (myV/potV*100).toFixed(2)+'% chance', fair); save();
     }
-    JP.entries.push({bot:true, u:{bot:true,name:'PetFlip Bot'}, name:'PetFlip Bot', items:botItems, col:PCOL[1]});
     renderJp(true);
-    await spinStrip(won?me:JP.entries[1]);
+    await spinStrip(won?me:JP.entries.find(e=>!e.you)||me);
     const potV=JP.entries.reduce((s,e)=>s+sumv(e.items),0);
-    $('jp-state').textContent='Winner'; $('jp-time').textContent=won?userName():'PetFlip Bot';
-    toast(won?'🏆 You won the jackpot! +'+fmt(potV):'The bot won the pot', won?'ok':'bad');
+    toast(won?'🏆 You won the jackpot! +'+fmt(potV):'You lost the pot', won?'ok':'bad');
     await sleep(3000);
   }catch(e){ toast(e.message,'bad'); }
-  JP={entries:[],state:'open'}; render();
+  JP={entries:[],state:'open',locked:false}; render();
 }
 function renderJp(keepStrip){
-  const pot=JP.entries.reduce((s,e)=>s+sumv(e.items),0), cnt=JP.entries.reduce((s,e)=>s+e.items.length,0);
-  $('jp-pot').innerHTML=gv(pot); $('jp-items').textContent=cnt; $('jp-ecount').textContent=JP.entries.length;
-  $('jp-state').textContent = JP.state==='roll'?'Rolling':JP.entries.length?'Call the bot to roll':'Waiting for you'; if(JP.state!=='roll') $('jp-time').textContent='--';
-  $('jp-bar').innerHTML=JP.entries.map(e=>`<div style="width:${pot?sumv(e.items)/pot*100:0}%;background:${e.col}"></div>`).join('');
-  $('jp-entries').innerHTML=JP.entries.length?JP.entries.map(e=>{ const v=sumv(e.items); return `<div class="entry" style="--pc:${e.col}"><div class="ava ${e.bot?'bot':'you'}" style="width:36px;height:36px;font-size:13px">${avaFor(e.u)}</div><div style="min-width:0"><div class="n">${esc(e.name)}</div><div class="s">${gv(v)} · ${e.items.length} items</div></div><div class="chips" style="margin-left:12px">${chipsHTML(e.items,5)}</div><div class="pct" style="color:${e.col}">${(pot?v/pot*100:0).toFixed(2)}%</div></div>`; }).join('')
-    : emptyHTML('🎰','Pot is empty','Add pets, then call the bot. Your chance equals your share of the pot.');
+  const pot=JP.entries.reduce((s,e)=>s+sumv(e.items),0);
+  const me=jpMine(), myV=me?sumv(me.items):0;
+  const ch=pot?myV/pot:0;
+  if($('jp-pot')) $('jp-pot').innerHTML=gv(pot);
+  if($('jp-ecount')) $('jp-ecount').textContent=JP.entries.length;
+  if($('jp-chance')) $('jp-chance').textContent=Math.round(ch*100)+'%';
+  if($('jp-arc-win')) $('jp-arc-win').setAttribute('stroke-dasharray',`${ch*C_JP} ${C_JP}`);
+  if($('jp-arc-lose')) $('jp-arc-lose').setAttribute('stroke-dasharray',`0 ${ch*C_JP} ${(1-ch)*C_JP} 0`);
+  if($('jp-status')){
+    $('jp-status').textContent = JP.state==='roll'?'Rolling…'
+      : JP.locked?'Waiting for roll'
+      : JP.entries.length?'Others are in — roll when ready'
+      : 'Select pets and join the pot';
+  }
+  if($('jp-join')) $('jp-join').style.display=JP.locked||JP.state==='roll'?'none':'';
+  if($('jp-locked-msg')) $('jp-locked-msg').style.display=JP.locked&&JP.state!=='roll'?'':'none';
+  if($('jp-roll')) $('jp-roll').style.display=JP.locked&&JP.state!=='roll'?'':'none';
+  if($('jp-bar')) $('jp-bar').innerHTML=JP.entries.map(e=>`<div style="width:${pot?sumv(e.items)/pot*100:0}%;background:${e.col}"></div>`).join('');
+  if($('jp-entries')) $('jp-entries').innerHTML=JP.entries.length?JP.entries.map(e=>{
+    const v=sumv(e.items);
+    return `<div class="entry" style="--pc:${e.col}"><div class="ava you" style="width:36px;height:36px;font-size:13px">${avaFor(e.u)}</div><div style="min-width:0"><div class="n">${esc(e.name)}</div><div class="s">${gv(v)} · ${e.items.length} items</div></div><div class="chips" style="margin-left:12px">${chipsHTML(e.items,5)}</div><div class="pct" style="color:${e.col}">${(pot?v/pot*100:0).toFixed(0)}%</div></div>`;
+  }).join('') : emptyHTML('🎰','Pot is empty','Be the first to join!');
   if(!keepStrip && JP.state!=='roll') buildStripIdle();
-  $('jp-join').disabled=JP.state==='roll'; $('jp-bot').disabled=JP.state==='roll'||!jpMine();
+  renderJpPicker();
 }
 function stileHTML(e){ return `<div class="stile" style="--pc:${e.col}"><div class="ava ${e.bot?'bot':'you'}">${avaFor(e.u)}</div>${esc(e.name.slice(0,10))}</div>`; }
 function buildStripIdle(){
@@ -543,8 +575,8 @@ try{ ADM.key=sessionStorage.getItem('pf_admin')||''; }catch(e){}
 const admHdr=()=>ADM.key?{'x-admin-key':ADM.key}:{};
 const admApi=(p,body)=>api(p,{body, headers:admHdr()});
 async function admInit(){
-  if(!API_ON){ $('adm-err').textContent='Admin needs the server — open the site from your Render link.'; return; }
   if(S.role || ADM.key) await admLoad(); else { $('adm-panel').style.display='none'; $('adm-login').style.display=''; }
+}
 }
 async function admLogin(){
   ADM.key=$('adm-key').value.trim(); $('adm-err').textContent='';
