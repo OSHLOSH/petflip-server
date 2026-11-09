@@ -4,7 +4,7 @@
 
 // Your trade bots. joinUrl = Roblox private server / profile link (optional)
 const BOTS = [
-  { name: 'petflip_grass', online: true, joinUrl: 'roblox://experiences/start?placeId=6284583030&followUserId=11965290745' },
+  { name: 'petflip_grass', online: true, joinUrl: 'https://www.roblox.com/users/11965290745/profile' },
 ];
 
 // Server URL. Leave '' when server.js serves this page. Test mode turns on automatically if no server answers.
