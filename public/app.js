@@ -576,7 +576,6 @@ const admHdr=()=>ADM.key?{'x-admin-key':ADM.key}:{};
 const admApi=(p,body)=>api(p,{body, headers:admHdr()});
 async function admInit(){
   if(S.role || ADM.key) await admLoad(); else { $('adm-panel').style.display='none'; $('adm-login').style.display=''; }
-}
 async function admLogin(){
   ADM.key=$('adm-key').value.trim(); $('adm-err').textContent='';
   try{
