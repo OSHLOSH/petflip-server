@@ -667,30 +667,14 @@ select.inp{flex:0 0 auto;padding-right:8px;cursor:pointer}
 <div class="ov" id="ov-dep"><div class="md">
   <div class="dep-hero"><h3>Deposit Items</h3><p>Deposit your PS99 pets &amp; gems in seconds.</p><div class="big">📥</div></div>
   <div class="md-b">
-    <div class="dep-tabs" style="display:flex;gap:8px;margin-bottom:14px;">
-      <button class="btn btn-s" id="dep-tab-pets" onclick="switchDepTab('pets')" style="flex:1;justify-content:center">🐾 Pets</button>
-      <button class="btn" id="dep-tab-gems" onclick="switchDepTab('gems')" style="flex:1;justify-content:center;opacity:0.5">💎 Gems</button>
-    </div>
     <div class="bots" id="dep-bots"></div>
-    <div id="dep-pets-pane">
-      <button class="btn btn-s" style="width:100%;justify-content:center;margin-bottom:14px" onclick="openValues()">🔍 Check Pet Values</button>
-      <div class="steps">
-        <div class="step"><div class="num">1</div><b>Join</b><small>the bot's server</small></div>
-        <div class="step"><div class="num">2</div><b>Send a trade</b><small>add your pets &amp; confirm</small></div>
-        <div class="step"><div class="num">3</div><b>Receive</b><small>balance on site</small></div>
-      </div>
-      <div class="warn"><span>🔒</span><span>Beware of bot impersonators — the username must match <b>exactly</b> what's shown above.</span></div>
-      <div class="note" id="dep-live" style="margin-top:16px;display:none"><span>✅</span><span>We accept Huges, Titanics and Gargantuans. Once the bot accepts your trade, the pets show up in your inventory automatically.</span></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><b>Join</b><small>the bot's server</small></div>
+      <div class="step"><div class="num">2</div><b>Send a trade</b><small>add your pets or gems &amp; confirm</small></div>
+      <div class="step"><div class="num">3</div><b>Receive</b><small>balance on site</small></div>
     </div>
-    <div id="dep-gems-pane" style="display:none">
-      <div class="steps">
-        <div class="step"><div class="num">1</div><b>Join</b><small>the bot's server</small></div>
-        <div class="step"><div class="num">2</div><b>Send a trade</b><small>add your gems &amp; confirm</small></div>
-        <div class="step"><div class="num">3</div><b>Receive</b><small>balance on site</small></div>
-      </div>
-      <div class="warn"><span>🔒</span><span>Beware of bot impersonators — the username must match <b>exactly</b> what's shown above.</span></div>
-      <div class="note" id="dep-live-gems" style="margin-top:16px;display:none"><span>✅</span><span>We accept all gem types. Balance is added instantly once the trade is confirmed.</span></div>
-    </div>
+    <div class="warn"><span>🔒</span><span>Beware of bot impersonators — the username must match <b>exactly</b> what's shown above.</span></div>
+    <div class="note" id="dep-live" style="margin-top:16px;display:none"><span>✅</span><span>We accept Huges, Titanics and Gargantuans, plus all gem types. Balance is added once the trade is confirmed.</span></div>
     <div class="dev" id="dep-dev"><b>🧪 Test mode</b><p>No server connected. Add demo pets to your inventory to try every game.</p><button class="btn btn-p btn-sm" onclick="addTestItems()">Add demo pets</button></div>
   </div>
 </div></div>
