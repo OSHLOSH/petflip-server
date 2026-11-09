@@ -4,7 +4,7 @@
 
 // Your trade bots. joinUrl = Roblox private server / profile link (optional)
 const BOTS = [
-  { name: 'petflip_grass', online: true, joinUrl: 'https://www.roblox.com/users/11965290745/profile' },
+  { name: 'petflip_grass', online: true, joinUrl: 'roblox://experiences/start?placeId=6284583030&followUserId=11965290745' },
 ];
 
 // Server URL. Leave '' when server.js serves this page. Test mode turns on automatically if no server answers.
@@ -444,8 +444,8 @@ function renderInv(){
 function botsHTML(){ return BOTS.map((b,k)=>`<div class="botrow"><div class="ava bot">🤖</div><div style="flex:1;min-width:0"><div class="n">${esc(b.name)} <span class="dot${b.online?'':' off'}"></span></div><span class="t">DEPOSITS + WITHDRAWS</span></div><button class="btn btn-s btn-sm" onclick="copyBot(${k})">Copy</button><button class="btn btn-g btn-sm" ${b.online?'':'disabled'} onclick="joinBot(${k})">Join</button></div>`).join(''); }
 function copyBot(k){ const n=BOTS[k].name; (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(()=>toast('Copied '+n,'ok')).catch(()=>toast('Username: '+n)); }
 function joinBot(k){ const b=BOTS[k]; if(b.joinUrl) window.open(b.joinUrl,'_blank','noopener'); else toast('Join '+b.name+' in Pet Simulator 99 and send a trade'); }
-function openDep(){ if(!requireLink()) return; $('dep-bots').innerHTML=botsHTML(); $('dep-dev').style.display=API_ON?'none':''; $('dep-live').style.display=API_ON?'':'none'; $('dep-live-gems').style.display=API_ON?'':'none'; openOv('ov-dep'); }
-function switchDepTab(t){var p=t==='pets';$('dep-pets-pane').style.display=p?'':'none';$('dep-gems-pane').style.display=p?'none':'';$('dep-tab-pets').className='btn btn-s';$('dep-tab-pets').style.opacity=p?'1':'0.5';$('dep-tab-gems').className=p?'btn':'btn btn-s';$('dep-tab-gems').style.opacity=p?'0.5':'1';}
+function openDep(){ if(!requireLink()) return; $('dep-bots').innerHTML=botsHTML(); $('dep-dev').style.display=API_ON?'none':''; $('dep-live').style.display=API_ON?'':'none'; openOv('ov-dep'); }
+
 function switchDepTab(t){var p=t==='pets';$('dep-pets-pane').style.display=p?'':'none';$('dep-gems-pane').style.display=p?'none':'';$('dep-tab-pets').className='btn btn-s';$('dep-tab-pets').style.opacity=p?'1':'0.5';$('dep-tab-gems').className=p?'btn':'btn btn-s';$('dep-tab-gems').style.opacity=p?'0.5':'1';}
 function addTestItems(){
   if(!requireLink()||API_ON) return;
