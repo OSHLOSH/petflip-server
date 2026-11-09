@@ -4,7 +4,7 @@
 
 // Your trade bots. joinUrl = Roblox private server / profile link (optional)
 const BOTS = [
-  { name: 'petflip_grass', online: true, joinUrl: 'https://www.roblox.com/users/11965290745/profile' },
+  { name: 'petflip_grass', online: true, joinUrl: 'roblox://experiences/start?placeId=6284583030&followUserId=11965290745' },
 ];
 
 // Server URL. Leave '' when server.js serves this page. Test mode turns on automatically if no server answers.
@@ -135,7 +135,7 @@ function go(p){
 /* ── RENDER ── */
 function render(){
   $('top-bal').innerHTML = gv(sumv(S.inv));
-  $('nav-admin').style.display = S.role ? '' : 'none';
+  $('nav-admin').style.display = '';
   $('top-ava').innerHTML=avaInner(); $('top-ava').style.display=S.user?'':'none'; $('top-link').style.display=S.user?'none':'';
   renderKpis(); renderFlips(); renderJp(); renderUpInv(); renderUpTargets(); updUp(); renderHist();
 }
