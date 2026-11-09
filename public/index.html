@@ -454,27 +454,39 @@ select.inp{flex:0 0 auto;padding-right:8px;cursor:pointer}
     <!-- ═══ JACKPOT ═══ -->
     <section class="page" id="p-jackpot">
       <div class="jp-grid">
-        <div>
-          <div class="card jp-top">
-            <div class="jp-pot">
-              <div><small>Pot Value</small><b id="jp-pot">0</b></div>
-              <div><small>Items</small><b id="jp-items" style="color:var(--text);text-shadow:none;font-size:22px">0</b></div>
-              <div class="jp-timer"><small id="jp-state">Waiting for players</small><b id="jp-time">--</b></div>
-            </div>
-            <div class="strip-wrap"><div class="marker"></div><div class="strip" id="jp-strip"></div></div>
-            <div class="bar" id="jp-bar"></div>
+        <!-- Left: inventory picker -->
+        <div class="card up-col" id="jp-inv-col">
+          <div class="section-h" style="margin-top:0"><h2>Your Items</h2><span class="count" id="jp-sel-count">0 selected</span></div>
+          <div class="tools"><input class="inp" placeholder="Search…" id="jp-q" oninput="renderJpPicker()"></div>
+          <div class="picker" id="jp-picker"></div>
+          <div style="padding-top:12px;border-top:1px solid var(--line);margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;color:var(--mute)">Entry value: <b id="jp-sum" style="color:var(--text)">0</b></span>
           </div>
-          <div class="section-h" style="margin-top:20px"><h2>Entries</h2><span class="count" id="jp-ecount">0</span></div>
-          <div class="entries" id="jp-entries"></div>
         </div>
-        <div class="card jp-side">
-          <div class="lbl">How it works</div>
-          <p style="font-size:13px;color:var(--dim);line-height:1.6">Throw pets into the pot and call the bot — it adds pets of about the same value from its own stock. Your chance to win equals your share of the pot. The winner takes everything; if the bot wins, your pets go to the bot.</p>
-          <div class="jp-actions">
-            <button class="btn btn-y" id="jp-join" onclick="openJpJoin()">Join Pot</button>
-            
+        <!-- Center: circle + action -->
+        <div class="card up-center">
+          <div class="up-io">
+            <div class="io"><small>Pot Value</small><b id="jp-pot" style="color:var(--gold)">0</b></div>
+            <div class="io"><small>Players</small><b id="jp-ecount" style="color:var(--text);text-shadow:none;font-size:22px">0</b></div>
           </div>
-          <div class="note" style="margin-top:14px"><span>ℹ️</span><span>The bot can only play with pets it actually has in stock. If it can't match your value, try a different amount.</span></div>
+          <div class="wheel" id="jp-wheel">
+            <svg viewBox="0 0 280 280">
+              <circle cx="140" cy="140" r="122" fill="none" stroke="var(--panel3)" stroke-width="20"/>
+              <circle cx="140" cy="140" r="122" fill="none" stroke="rgba(255,77,109,.4)" stroke-width="20" id="jp-arc-lose"/>
+              <circle cx="140" cy="140" r="122" fill="none" stroke="#2ee59d" stroke-width="20" stroke-linecap="butt" id="jp-arc-win"/>
+            </svg>
+            <div class="wheel-core"><small>Win chance</small><b id="jp-chance">0%</b></div>
+          </div>
+          <div id="jp-status" style="text-align:center;color:var(--mute);font-size:13px;margin-bottom:10px;min-height:18px"></div>
+          <button class="btn btn-y" style="width:100%;justify-content:center;height:48px;font-size:15px" id="jp-join" onclick="jpDoJoin()">Join Pot</button>
+          <button class="btn btn-p" style="width:100%;justify-content:center;height:44px;font-size:14px;margin-top:8px;display:none" id="jp-roll" onclick="jpRoll()">🎰 Roll It</button>
+          <div id="jp-locked-msg" style="display:none;text-align:center;padding:10px;color:var(--mute);font-size:12px">🔒 You're locked in — wait for the roll</div>
+        </div>
+        <!-- Right: entries -->
+        <div class="card up-col">
+          <div class="section-h" style="margin-top:0"><h2>Entries</h2></div>
+          <div class="entries" id="jp-entries" style="flex:1"></div>
+          <div class="bar" id="jp-bar" style="margin-top:12px"></div>
         </div>
       </div>
     </section>
