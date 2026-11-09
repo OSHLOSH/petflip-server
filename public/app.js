@@ -135,7 +135,7 @@ function go(p){
 /* ── RENDER ── */
 function render(){
   $('top-bal').innerHTML = gv(sumv(S.inv));
-  $('nav-admin').style.display = '';
+  $('nav-admin').style.display = (S.role || location.hash === '#admin') ? '' : 'none';
   $('top-ava').innerHTML=avaInner(); $('top-ava').style.display=S.user?'':'none'; $('top-link').style.display=S.user?'none':'';
   renderKpis(); renderFlips(); renderJp(); renderUpInv(); renderUpTargets(); updUp(); renderHist();
 }
