@@ -5,6 +5,91 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PetFlip</title>
 <style>
+
+:root{
+  --gold:#f59e0b;--gold-g:linear-gradient(135deg,#f59e0b,#fbbf24);
+  --win-g:linear-gradient(135deg,#16a34a,#22c55e);
+  --lose-g:linear-gradient(135deg,#991b1b,#ef4444);
+  --mute:#6b7280;
+  --heads:linear-gradient(135deg,#2563eb,#60a5fa);
+  --tails:linear-gradient(135deg,#dc2626,#f87171);
+  --r-garg:linear-gradient(135deg,#7c3aed,#a78bfa);
+  --r-titan:linear-gradient(135deg,#b45309,#fcd34d);
+  --r-huge:linear-gradient(135deg,#0e7490,#38bdf8);
+}
+
+/* ── app.js injected classes ── */
+.kpi{background:#111827;border-radius:8px;padding:10px 14px;text-align:center}
+.kpi .vl{font-size:18px;font-weight:800;color:#22c55e}
+.kpi .nm{font-size:11px;color:#6b7280;margin-top:2px}
+
+.tiles{display:flex;flex-wrap:wrap;gap:6px}
+.tile{
+  width:70px;border-radius:8px;padding:6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:#111827;border:1.5px solid #1f2937;transition:.15s;
+}
+.tile:hover{border-color:#22c55e;background:#052e16}
+.tile.sel{border-color:#22c55e;background:#052e16}
+.tile.dis{opacity:.4;cursor:default}
+.tile.r-garg{border-color:#7c3aed}
+.tile.r-titan{border-color:#b45309}
+.tile.r-huge{border-color:#0e7490}
+.tile .ic{width:40px;height:40px;border-radius:6px;background:#1f2937;display:flex;align-items:center;justify-content:center;font-size:22px}
+.tile .nm{font-size:9px;color:#9ca3af;text-align:center;overflow:hidden;white-space:nowrap;width:100%;text-overflow:ellipsis}
+.tile .vl{font-size:9px;color:#22c55e;font-weight:700}
+.tile .rar{font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;background:rgba(124,58,237,.2);color:#a78bfa}
+.tile .stock{font-size:8px;color:#6b7280}
+.tile .stock.out{color:#ef4444}
+.tile .ph{width:40px;height:40px;border-radius:6px;background:#1f2937}
+
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#1f2937;border-radius:6px;padding:3px 7px;font-size:12px;
+  border:1px solid #374151;
+}
+.chip.more{background:#374151;color:#9ca3af;cursor:default}
+.chip .ic{font-size:16px}
+.chip .nm{color:#e2e8f0;font-size:11px}
+.chip .vl{color:#22c55e;font-size:10px;font-weight:700}
+.chip .em{font-size:16px}
+
+.gem{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:13px;font-weight:700;color:var(--gold);
+}
+
+.btn{border-radius:8px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:.15s}
+.btn-y{background:var(--gold-g);color:#0f172a}
+.btn-r{background:#991b1b;color:#fff}
+.btn-r:hover{background:#7f1d1d}
+.btn-p{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}
+.btn-p:hover{background:linear-gradient(135deg,#4338ca,#6d28d9)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-y:hover{filter:brightness(1.1)}
+
+.em{font-size:20px}
+.nm{color:#e2e8f0}
+.vl{color:#22c55e;font-weight:700}
+.rar{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(124,58,237,.2);color:#a78bfa;text-transform:uppercase}
+.stock{font-size:10px;color:#6b7280}
+.stock.out{color:#ef4444}
+.up{color:#22c55e}
+.dn{color:#ef4444}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:48px 24px;color:#6b7280;text-align:center}
+.empty .em{font-size:40px}
+.ic{display:inline-flex;align-items:center;justify-content:center}
+
+/* side dot on coinflip */
+.side-dot{
+  width:14px;height:14px;border-radius:50%;border:2px solid #0b0f1a;
+  position:absolute;bottom:-2px;right:-2px;
+}
+.side-dot.h{background:var(--heads)}
+.side-dot.t{background:var(--tails)}
+
+/* so-h / so-t side selection */
+#so-h.on,#so-t.on{background:#166534;border-color:#22c55e;color:#22c55e}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0f1a;color:#e2e8f0;height:100vh;overflow:hidden;display:flex}
 a{color:inherit;text-decoration:none}
@@ -46,7 +131,7 @@ input{font-family:inherit}
   transition:all .15s;position:relative;flex-shrink:0;
 }
 .nav:hover{background:rgba(255,255,255,0.06);color:#9ca3af}
-.nav.active{background:#166534;color:#22c55e}
+.nav.on{background:#166534;color:#22c55e}
 .nav svg{width:20px;height:20px;fill:currentColor}
 
 /* ===== MAIN WRAP ===== */
@@ -138,7 +223,7 @@ input{font-family:inherit}
   padding:20px;
 }
 .page{display:none}
-.page.active{display:block}
+.page.on{display:block}
 
 /* ===== HOME PAGE ===== */
 .home-hero{
@@ -466,22 +551,14 @@ input{font-family:inherit}
 .adm-users-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
 
 /* ===== OVERLAYS ===== */
-.overlay{
+.ov{
   position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
   display:none;align-items:center;justify-content:center;
   backdrop-filter:blur(4px);
 }
-.overlay.open{display:flex}
-.ov-box{
-  background:#111827;border-radius:18px;padding:24px;
-  width:90%;max-width:520px;max-height:90vh;overflow-y:auto;
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 24px 64px rgba(0,0,0,.7);
-}
-.ov-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:20px;
-}
+.ov.on{display:flex}
+
+
 .ov-title{font-size:18px;font-weight:700;color:#fff}
 .ov-close{
   background:transparent;color:#9ca3af;font-size:20px;
@@ -665,6 +742,27 @@ input{font-family:inherit}
 .empty-state p{font-size:14px}
 .err-text{color:#ef4444;font-size:12px;min-height:18px}
 .hidden{display:none!important}
+
+/* ── Draggable overlays ── */
+
+/* Overlay content padding */
+.ov-box>*:not(.ov-header){margin-left:20px;margin-right:20px}
+.ov-box>*:not(.ov-header):last-child{margin-bottom:20px}
+
+.ov-box{
+  position:relative;border-radius:14px;background:#0d1424;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 24px 64px rgba(0,0,0,.7);
+  min-width:320px;max-width:95vw;max-height:90vh;
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.ov-box.dragging{cursor:grabbing;user-select:none}
+.ov-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);
+  cursor:grab;flex-shrink:0;
+}
+.ov-header:active{cursor:grabbing}
 </style>
 </head>
 <body>
@@ -722,13 +820,13 @@ input{font-family:inherit}
       <span class="gem-icon"></span>
       <span id="top-bal">0</span>
     </div>
-    <button class="btn-wallet" onclick="document.getElementById('ov-dep').classList.add('open')">
+    <button class="btn-wallet" onclick="openDep()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 7H3a2 2 0 00-2 2v9a2 2 0 002 2h18a2 2 0 002-2V9a2 2 0 00-2-2zm-1 11H4V10h16v8zm-5-4a2 2 0 110 4 2 2 0 010-4z"/></svg>
       Wallet
     </button>
     <button class="btn-gift">🎁</button>
-    <button class="btn-track" onclick="document.getElementById('ov-wd').classList.add('open')">Track Withdrawals</button>
-    <div class="top-user" onclick="document.getElementById('ov-prof').classList.add('open')">
+    <button class="btn-track" onclick="openOv('ov-wd')">Track Withdrawals</button>
+    <div class="top-user" onclick="openOv('ov-prof')">
       <div class="top-user-ava"><img id="top-ava2" src="" alt="" onerror="this.style.display='none'"></div>
       <span class="top-user-name">Guest</span>
     </div>
@@ -847,7 +945,7 @@ input{font-family:inherit}
 
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
           <span id="pill-cf" style="background:#22c55e;color:#0f172a;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700" id="cf-count">0 Active</span>
-          <button class="btn-create" onclick="document.getElementById('ov-create').classList.add('open')">+ Create</button>
+          <button class="btn-create" onclick="openCreate()">+ Create</button>
           <button class="btn-hist" onclick="go('history')">History</button>
           <button class="btn-sort">Highest to Lowest ▾</button>
         </div>
@@ -926,7 +1024,7 @@ input{font-family:inherit}
         <div id="jp-entries" class="jp-entries-wrap"></div>
 
         <div class="jp-actions" style="margin-bottom:16px">
-          <button class="btn-jp-join" id="jp-join" onclick="document.getElementById('ov-dep').classList.add('open')">+ Join Pot</button>
+          <button class="btn-jp-join" id="jp-join" onclick="openDep()">+ Join Pot</button>
           <button class="btn-jp-roll" id="jp-roll">Roll</button>
         </div>
 
@@ -1205,11 +1303,11 @@ input{font-family:inherit}
 <!-- ===== OVERLAYS ===== -->
 
 <!-- CREATE COINFLIP OVERLAY -->
-<div class="overlay" id="ov-create">
+<div class="ov" id="ov-create">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title" id="cr-title">Create Coinflip</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div class="ov-label">Your Name</div>
     <div id="cr-user" style="font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:12px">Guest</div>
@@ -1238,11 +1336,11 @@ input{font-family:inherit}
 </div>
 
 <!-- DEPOSIT OVERLAY -->
-<div class="overlay" id="ov-dep">
+<div class="ov" id="ov-dep">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title">Deposit</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div class="ov-tabs">
       <div class="ov-tab active" id="dep-tab-pets" onclick="switchDepTab('pets')">Pets</div>
@@ -1266,11 +1364,11 @@ input{font-family:inherit}
 </div>
 
 <!-- WITHDRAW OVERLAY -->
-<div class="overlay" id="ov-wd">
+<div class="ov" id="ov-wd">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title" id="wd-n">Withdraw Pets</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div class="bot-opts">
       <div id="wd-bots" style="display:flex;gap:6px"></div>
@@ -1289,23 +1387,23 @@ input{font-family:inherit}
 </div>
 
 <!-- WDBOT OVERLAY -->
-<div class="overlay" id="ov-wdbot">
+<div class="ov" id="ov-wdbot">
   <div class="ov-box" style="max-width:400px">
     <div class="ov-header">
       <div class="ov-title">Withdrawal Bot</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div id="wdbot-sub" style="font-size:13px;color:#9ca3af;margin-bottom:12px">Processing...</div>
-    <button class="btn-ov-submit" onclick="this.closest('.overlay').classList.remove('open')">OK</button>
+    <button class="btn-ov-submit" onclick="this.closest('.ov').classList.remove('on')">OK</button>
   </div>
 </div>
 
 <!-- INVENTORY OVERLAY -->
-<div class="overlay" id="ov-inv">
+<div class="ov" id="ov-inv">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title">Inventory</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div class="inv-header-row">
       <div class="inv-ava-box"><img id="inv-ava" src="" alt="" onerror="this.style.display='none'"></div>
@@ -1332,11 +1430,11 @@ input{font-family:inherit}
 </div>
 
 <!-- VALUES OVERLAY -->
-<div class="overlay" id="ov-vals">
+<div class="ov" id="ov-vals">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title">Pet Values</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <input id="vals-q" class="ov-input" placeholder="Search pets by name...">
     <div id="vals-grid" class="vals-grid"></div>
@@ -1344,11 +1442,11 @@ input{font-family:inherit}
 </div>
 
 <!-- PROFILE OVERLAY -->
-<div class="overlay" id="ov-prof">
+<div class="ov" id="ov-prof">
   <div class="ov-box" style="max-width:420px">
     <div class="ov-header">
       <div class="ov-title">Profile</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div style="text-align:center;padding:20px 0">
       <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);margin:0 auto 12px;overflow:hidden">
@@ -1357,16 +1455,16 @@ input{font-family:inherit}
       <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">Guest</div>
       <div style="font-size:13px;color:#9ca3af">Not linked to Roblox</div>
     </div>
-    <button class="btn-ov-submit" onclick="document.getElementById('ov-link').classList.add('open');document.getElementById('ov-prof').classList.remove('open')">Link Roblox Account</button>
+    <button class="btn-ov-submit" onclick="openOv('ov-link');closeOv('ov-prof')">Link Roblox Account</button>
   </div>
 </div>
 
 <!-- ROOM (VIEW FLIP) OVERLAY -->
-<div class="overlay" id="ov-room">
+<div class="ov" id="ov-room">
   <div class="ov-box">
     <div class="ov-header">
       <div class="ov-title" id="room-title">Coinflip Room</div>
-      <button class="ov-close" id="room-x" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" id="room-x" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
     <div id="room-sub" style="font-size:13px;color:#9ca3af;margin-bottom:16px">Waiting for opponent...</div>
     <div class="room-sides">
@@ -1386,11 +1484,11 @@ input{font-family:inherit}
 </div>
 
 <!-- LINK ROBLOX OVERLAY -->
-<div class="overlay" id="ov-link">
+<div class="ov" id="ov-link">
   <div class="ov-box" style="max-width:420px">
     <div class="ov-header">
       <div class="ov-title">Link Roblox Account</div>
-      <button class="ov-close" onclick="this.closest('.overlay').classList.remove('open')">✕</button>
+      <button class="ov-close" onclick="this.closest('.ov').classList.remove('on')">✕</button>
     </div>
 
     <!-- Step 1 -->
@@ -1419,7 +1517,7 @@ input{font-family:inherit}
       </div>
       <div id="lk-prof" style="margin-top:12px"></div>
       <div id="lk-sub" style="font-size:12px;color:#9ca3af;text-align:center;margin-top:8px"></div>
-      <button class="btn-ov-submit" onclick="document.getElementById('ov-link').classList.remove('open')">Done</button>
+      <button class="btn-ov-submit" onclick="closeOv('ov-link')">Done</button>
     </div>
   </div>
 </div>
@@ -1472,29 +1570,42 @@ function switchBot(ov,bot){
   if(liveEl) liveEl.classList.toggle('active',bot==='live');
 }
 
-// ===== NAV ROUTING =====
-// app.js defines go(p) but we ensure nav clicks work
-document.querySelectorAll('.nav[data-p]').forEach(el=>{
-  el.addEventListener('click',function(e){
-    e.preventDefault();
-    const p = this.dataset.p;
-    if(typeof go==='function') go(p);
-    else {
-      document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-      const pg = document.getElementById('p-'+p);
-      if(pg) pg.classList.add('active');
-      document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
-      this.classList.add('active');
-    }
-  });
-});
 
-// Close overlays on backdrop click
-document.querySelectorAll('.overlay').forEach(ov=>{
-  ov.addEventListener('click',function(e){
-    if(e.target===this) this.classList.remove('open');
+// ── Draggable overlays ──
+(function(){
+  let drag=null,ox=0,oy=0,sx=0,sy=0;
+  document.addEventListener('mousedown',function(e){
+    const hdr=e.target.closest('.ov-header');
+    if(!hdr) return;
+    const box=hdr.closest('.ov-box');
+    if(!box) return;
+    // Position the box absolutely within the ov if not already
+    const ov=box.parentElement;
+    const br=box.getBoundingClientRect();
+    const or2=ov.getBoundingClientRect();
+    if(box.style.position!=='absolute'){
+      box.style.position='absolute';
+      box.style.left=(br.left-or2.left)+'px';
+      box.style.top=(br.top-or2.top)+'px';
+      box.style.margin='0';
+      ov.style.alignItems='flex-start';
+      ov.style.justifyContent='flex-start';
+    }
+    drag=box; ox=e.clientX; oy=e.clientY;
+    sx=parseInt(box.style.left)||0; sy=parseInt(box.style.top)||0;
+    box.classList.add('dragging');
+    e.preventDefault();
   });
-});
+  document.addEventListener('mousemove',function(e){
+    if(!drag) return;
+    const dx=e.clientX-ox, dy=e.clientY-oy;
+    drag.style.left=(sx+dx)+'px';
+    drag.style.top=(sy+dy)+'px';
+  });
+  document.addEventListener('mouseup',function(){
+    if(drag){drag.classList.remove('dragging');drag=null;}
+  });
+})();
 </script>
 <script src="app.js"></script>
 </body>
