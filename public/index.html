@@ -7,18 +7,18 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#08090d;--bg2:#0d0e14;--bg3:#111420;--bg4:#181c2e;
-  --line:rgba(255,255,255,.06);--line2:rgba(255,255,255,.1);
-  --brand:#7c5cff;--brand2:#a08dff;--brand-g:rgba(124,92,255,.18);
-  --gold:#ffc83d;--gold-g:rgba(255,200,61,.18);
-  --win:#2ee59d;--win-g:rgba(46,229,157,.18);
-  --lose:#ff4d6d;--lose-g:rgba(255,77,109,.18);
-  --heads:#ffc83d;--tails:#7c5cff;
-  --text:#edeef5;--dim:#8890aa;--mute:#404460;
-  --r-garg:#ff6b35;--r-titan:#c084fc;--r-huge:#60a5fa;
+  --bg:#0b0d13;--bg2:#0f1117;--bg3:#13161f;--bg4:#1a1e2a;--bg5:#1f2436;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.12);
+  --brand:#22c55e;--brand2:#4ade80;--brand-g:rgba(34,197,94,.15);--brand-d:rgba(34,197,94,.08);
+  --gold:#fbbf24;--gold-g:rgba(251,191,36,.15);
+  --win:#22c55e;--win-g:rgba(34,197,94,.15);
+  --lose:#ef4444;--lose-g:rgba(239,68,68,.15);
+  --heads:#fbbf24;--tails:#818cf8;
+  --text:#e2e8f0;--dim:#94a3b8;--mute:#334155;--mute2:#475569;
+  --r-garg:#f97316;--r-titan:#a855f7;--r-huge:#3b82f6;
   --mono:'JetBrains Mono',ui-monospace,monospace;
-  --sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
-  --rad:10px;--rad2:14px;--sid:220px;--top:52px;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --rad:8px;--rad2:12px;--sid:60px;--top:52px;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;overflow:hidden}
 a{color:var(--brand2);text-decoration:none}
@@ -26,1098 +26,716 @@ input,select,button,textarea{font:inherit}
 button{cursor:pointer;border:none;background:none;color:inherit}
 input,select{outline:none}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--mute);border-radius:4px}
-
-/* ── LAYOUT ── */
 #wrap{display:flex;height:100vh}
-#sidebar{width:var(--sid);min-width:var(--sid);height:100vh;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;position:relative;z-index:10}
+#sidebar{width:var(--sid);min-width:var(--sid);height:100vh;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;overflow:hidden;position:relative;z-index:10;padding:0 0 12px}
 #main-col{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
-#topbar{height:var(--top);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:0;padding:0 18px;flex-shrink:0;background:var(--bg2)}
+#topbar{height:var(--top);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 16px;flex-shrink:0;background:var(--bg2)}
 #content{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
-
-/* ── SIDEBAR ── */
-.logo{padding:16px 20px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
-.logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#5b3fe0);display:grid;place-items:center;font-size:14px;flex-shrink:0}
-.logo-text{font-weight:800;font-size:15px;letter-spacing:-.3px;color:var(--text)}
-.logo-badge{font-size:9px;font-weight:700;color:var(--brand2);letter-spacing:.5px;margin-top:1px}
-.nav-section{padding:10px 10px 4px}
-.nav-label{font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--mute);text-transform:uppercase;padding:0 10px 6px}
-.nav{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--dim);transition:background .15s,color .15s;position:relative}
-.nav:hover{background:rgba(255,255,255,.04);color:var(--text)}
-.nav.on{background:var(--brand-g);color:var(--brand2)}
-.nav.on::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
-.nav-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-.nav-pill{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--brand);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;line-height:1}
-.nav-sep{height:1px;background:var(--line);margin:8px 10px}
-#nav-admin{display:none}
-.sid-bottom{margin-top:auto;padding:12px 10px;border-top:1px solid var(--line)}
-.sid-bal{padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--line)}
-.sid-bal-lbl{font-size:10px;font-weight:600;color:var(--mute);letter-spacing:.4px;text-transform:uppercase;margin-bottom:3px}
-.sid-bal-val{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:700;font-family:var(--mono)}
-.sid-actions{display:flex;gap:6px;margin-top:8px}
-.btn-dep{flex:1;padding:7px;border-radius:7px;background:var(--brand-g);border:1px solid rgba(124,92,255,.35);color:var(--brand2);font-size:12px;font-weight:700;transition:.15s}
-.btn-dep:hover{background:rgba(124,92,255,.28)}
-.btn-wd{flex:1;padding:7px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--line2);color:var(--dim);font-size:12px;font-weight:700;transition:.15s}
-.btn-wd:hover{color:var(--text);background:rgba(255,255,255,.07)}
-
-/* ── TOPBAR ── */
-.tb-page{flex:0 0 auto;margin-right:16px}
-.tb-page-name{font-size:15px;font-weight:700;line-height:1.1}
-.tb-page-sub{font-size:11px;color:var(--dim)}
-.tb-sep{width:1px;height:28px;background:var(--line);margin:0 4px}
-#kpis{display:flex;align-items:center;gap:1px;flex:1;overflow:hidden}
-.kpi{padding:4px 14px;display:flex;flex-direction:column;border-right:1px solid var(--line);position:relative}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,transparent);border-radius:0 0 2px 2px}
-.kpi small{font-size:10px;color:var(--dim);font-weight:500;white-space:nowrap;letter-spacing:.2px}
-.kpi b{font-size:13px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;gap:3px;white-space:nowrap}
-.kpi b.up{color:var(--win)}.kpi b.dn{color:var(--lose)}
-.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
-#top-bal{font-family:var(--mono);font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px;color:var(--gold)}
-.top-btn{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
-.top-btn-link{background:var(--brand-g);border:1px solid rgba(124,92,255,.4);color:var(--brand2)}
-.top-btn-link:hover{background:rgba(124,92,255,.28)}
-.top-btn-av{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--text)}
-.top-btn-av:hover{background:rgba(255,255,255,.1)}
-#top-ava{display:none;width:30px;height:30px;border-radius:50%;background:var(--brand-g);border:1px solid rgba(124,92,255,.4);overflow:hidden;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--brand2);cursor:pointer}
+.page{display:none}.page.on{display:block}
+.sid-logo{width:40px;height:40px;background:var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:14px 0 6px;flex-shrink:0}
+.sid-logo svg{width:22px;height:22px;fill:#fff}
+.sid-ava{width:36px;height:36px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--mute);margin:4px 0;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer}
+.sid-online{position:absolute;bottom:0;right:0;width:9px;height:9px;background:#22c55e;border-radius:50%;border:2px solid var(--bg2)}
+.sid-sep{width:36px;height:1px;background:var(--line);margin:8px 0}
+.sid-label{font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;margin:4px 0 2px;align-self:center}
+.nav{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--dim);transition:.15s;cursor:pointer;position:relative;flex-shrink:0;margin:1px 0}
+.nav:hover{background:var(--bg4);color:var(--text)}
+.nav.on{background:var(--brand-d);color:var(--brand)}
+.nav svg{width:18px;height:18px;fill:currentColor}
+#topbar-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+#pg-title{font-weight:800;font-size:15px;color:var(--text)}
+#pg-sub{font-size:12px;color:var(--dim);margin-left:2px}
+#topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.top-bal-wrap{display:flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
+.gem-icon{width:16px;height:16px;fill:var(--brand)}
+#top-bal{font-weight:700;font-size:13px;color:var(--text);font-family:var(--mono)}
+.btn-wallet{background:var(--brand);color:#fff;font-weight:700;font-size:12px;border-radius:7px;padding:5px 12px;transition:.15s;border:none;cursor:pointer}
+.btn-wallet:hover{background:var(--brand2)}
+#top-ava{width:30px;height:30px;border-radius:50%;background:var(--bg4);border:2px solid var(--mute);overflow:hidden;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:12px}
 #top-ava img{width:100%;height:100%;object-fit:cover}
-#top-link{}
-
-/* ── PAGES ── */
-.page{display:none;animation:fadein .15s ease}
-.page.on{display:block}
-@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.pad{padding:22px 24px}
-.ph{margin-bottom:20px}
-.ph h1{font-size:20px;font-weight:800;letter-spacing:-.4px}
-.ph p{color:var(--dim);font-size:13px;margin-top:3px}
-
-/* ── KPIs strip (page-level) ── */
-#kpis2{display:flex;gap:1px;background:var(--bg2);border-radius:var(--rad);border:1px solid var(--line);overflow:hidden;margin-bottom:20px}
-#kpis2 .kpi{padding:12px 16px;border-right:1px solid var(--line);flex:1}
-#kpis2 .kpi:last-child{border-right:none}
-
-/* ── COINFLIP PAGE ── */
-.cf-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.cf-top-left{display:flex;align-items:center;gap:10px}
-.cf-title{font-size:16px;font-weight:700}
-.cf-count-wrap{display:flex;align-items:center;gap:6px}
-.cf-pill{background:var(--brand);color:#fff;border-radius:9px;font-size:11px;font-weight:800;padding:2px 7px;min-width:20px;text-align:center}
-.btn-create{padding:8px 16px;border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:700;transition:.15s}
-.btn-create:hover{background:var(--brand2)}
-#flips{display:flex;flex-direction:column;gap:8px}
-.flip{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad2);padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:center;gap:14px;transition:border-color .15s}
-.flip:hover{border-color:var(--line2)}
-.flip .who{display:flex;align-items:center;gap:9px;min-width:0}
-.flip .mid{display:flex;flex-direction:column;align-items:center;gap:2px}
-.flip .mid .v{font-family:var(--mono);font-weight:700;font-size:13px;display:flex;align-items:center;gap:3px}
-.flip .mid .vs{font-size:10px;font-weight:800;color:var(--mute);letter-spacing:.5px}
-.flip .mid .range{font-size:11px;color:var(--dim);font-family:var(--mono)}
-.flip .acts{display:flex;gap:6px;justify-content:flex-end}
-.recent-hd{font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.5px;text-transform:uppercase;margin:20px 0 10px}
-#recent{display:flex;flex-direction:column;gap:4px}
-.rc{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border-radius:8px;border:1px solid var(--line);font-size:12px;color:var(--dim)}
-.rc b{color:var(--text)}
-.mini-res{width:28px;height:20px;border-radius:4px;display:grid;place-items:center;font-size:9px;font-weight:800;margin-left:auto}
-.mini-res.mc-h{background:var(--gold-g);color:var(--gold)}
-.mini-res.mc-t{background:var(--brand-g);color:var(--brand2)}
-
-/* ── JACKPOT PAGE ── */
-.jp-wrap{display:grid;grid-template-columns:1fr 320px;gap:20px;min-height:calc(100vh - var(--top) - 100px)}
-.jp-left{display:flex;flex-direction:column;gap:14px}
-.jp-right{display:flex;flex-direction:column;gap:14px}
-.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad2);overflow:hidden}
-.card-hd{padding:14px 18px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--dim)}
-.card-hd span{color:var(--text)}
-.card-bd{padding:16px 18px}
-.jp-arc-wrap{display:flex;justify-content:center;padding:16px 0}
-.jp-pot-val{font-size:28px;font-weight:800;font-family:var(--mono);display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:4px}
-.jp-stats{display:flex;justify-content:center;gap:24px;margin-bottom:16px}
-.jp-stat{text-align:center}
-.jp-stat b{font-size:16px;font-weight:700;display:block;font-family:var(--mono)}
-.jp-stat small{font-size:11px;color:var(--dim)}
-.jp-bar-wrap{margin:12px 0;border-radius:5px;overflow:hidden;height:8px;background:var(--bg3)}
-#jp-bar{display:flex;height:100%}
-#jp-bar div{height:100%;transition:width .4s ease}
-.jp-status-txt{text-align:center;font-size:12px;color:var(--dim);margin-bottom:14px}
-.jp-btns{display:flex;gap:8px;padding:0 18px 18px}
-.jp-btns .btn{flex:1}
-.jp-entries-wrap{flex:1;overflow-y:auto;max-height:420px}
-#jp-entries{display:flex;flex-direction:column;gap:6px;padding:12px 18px}
-.entry{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--pc,var(--brand))}
-.entry .pct{font-size:12px;font-weight:800;font-family:var(--mono);margin-left:auto}
-.strip-wrap{background:var(--bg3);border-top:1px solid var(--line);overflow:hidden;position:relative;height:72px}
-.strip-wrap::before,.strip-wrap::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2}
-.strip-wrap::before{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
-.strip-wrap::after{right:0;background:linear-gradient(to left,var(--bg2),transparent)}
-.strip-tick{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--brand);z-index:3;transform:translateX(-50%)}
-#jp-strip{display:flex;gap:4px;padding:10px 50%;will-change:transform}
-.stile{flex-shrink:0;width:52px;height:52px;border-radius:8px;background:var(--bg4);border:2px solid var(--pc,var(--line));display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
-.jp-picker-inner{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
-.jp-picker-top{display:flex;align-items:center;gap:8px}
-.jp-sel-info{font-size:12px;color:var(--dim)}
-
-/* ── UPGRADER PAGE ── */
-.up-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start}
-.up-mid{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:50px}
-.wheel-wrap{position:relative;width:200px;height:200px}
-#wheel{width:200px;height:200px;border-radius:50%;position:relative;overflow:visible;transition:box-shadow .4s}
-#wheel.win{box-shadow:0 0 40px rgba(46,229,157,.4)}
-.wheel-svg{width:200px;height:200px}
-#needle{position:absolute;bottom:50%;left:50%;transform-origin:bottom center;width:2px;height:88px;margin-left:-1px;background:linear-gradient(to top,transparent,#fff);border-radius:2px 2px 0 0;z-index:5;filter:drop-shadow(0 0 4px rgba(255,255,255,.8))}
-#needle::after{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:#fff}
-.up-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.up-stat{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;text-align:center}
-.up-stat-lbl{font-size:10px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-.up-stat-val{font-size:16px;font-weight:800;font-family:var(--mono);margin-top:2px}
-.up-panel-hd{font-size:12px;font-weight:700;color:var(--dim);letter-spacing:.3px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.up-panel-hd span{color:var(--text);font-size:13px;font-weight:700;text-transform:none;letter-spacing:0}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
-.tile{position:relative;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:10px 8px 8px;cursor:pointer;text-align:center;transition:.15s;overflow:hidden}
-.tile:hover{border-color:var(--line2);background:var(--bg4)}
-.tile.sel{border-color:var(--brand);background:var(--brand-g)}
-.tile.dis{opacity:.4;pointer-events:none}
-.tile .rar{position:absolute;top:4px;left:5px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;opacity:.7}
-.tile.r-garg .rar{color:var(--r-garg)}.tile.r-titan .rar{color:var(--r-titan)}.tile.r-huge .rar{color:var(--r-huge)}
-.tile.r-garg{border-top:2px solid var(--r-garg)}.tile.r-titan{border-top:2px solid var(--r-titan)}.tile.r-huge{border-top:2px solid var(--r-huge)}
-.tile .em{font-size:28px;line-height:1.1;margin:6px 0 4px}
-.tile .em img{width:44px;height:44px;object-fit:contain;border-radius:4px}
-.tile .nm{font-size:10px;font-weight:600;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.tile .vl{font-size:11px;font-weight:800;font-family:var(--mono);display:flex;align-items:center;justify-content:center;gap:3px;color:var(--gold)}
-.tile .chk{position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:3px;background:var(--brand-g);display:none}
-.tile.sel .chk{display:grid;place-items:center;font-size:9px;color:var(--brand2)}
-.tile .stock{position:absolute;top:4px;right:4px;font-size:8px;font-weight:700;color:var(--dim);background:var(--bg4);border-radius:3px;padding:1px 4px}
-.tile .stock.out{color:var(--lose)}
-.up-tgt-info{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:13px;text-align:center;color:var(--dim)}
-.up-tgt-info b{color:var(--text);display:block;font-size:15px;margin-bottom:2px}
-#up-res{margin-top:10px;text-align:center;font-size:14px;font-weight:700;padding:10px;border-radius:8px;display:none}
-#up-res.w{display:block;background:var(--win-g);color:var(--win)}
-#up-res.l{display:block;background:var(--lose-g);color:var(--lose)}
-.qm-btns{display:flex;gap:6px;flex-wrap:wrap}
-.qm-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:var(--bg3);color:var(--dim);font-size:11px;font-weight:700;transition:.12s;cursor:pointer}
-.qm-btn:hover{border-color:var(--brand);color:var(--brand2)}
-
-/* ── HISTORY ── */
-.table-wrap{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad2);overflow:hidden}
-.table-wrap table{width:100%;border-collapse:collapse}
-.table-wrap thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--bg3)}
-.table-wrap tbody tr{transition:background .1s}
-.table-wrap tbody tr:hover{background:var(--bg3)}
-.table-wrap tbody td{padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
-.table-wrap tbody tr:last-child td{border-bottom:none}
-.tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700}
-.tag.w{background:var(--win-g);color:var(--win)}.tag.l{background:var(--lose-g);color:var(--lose)}.tag.g{background:rgba(255,200,61,.12);color:var(--gold)}
-.mono{font-family:var(--mono)}
-
-/* ── PROVABLY FAIR ── */
-.pf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.pf-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad2);padding:20px}
-.pf-card h3{font-size:14px;font-weight:700;margin-bottom:14px}
-.pf-info{font-size:12px;color:var(--dim);line-height:1.75;margin-bottom:14px}
-.pf-info code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:11px;color:var(--brand2)}
-.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
-.fl{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.3px;text-transform:uppercase}
-.inp{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;width:100%;transition:.15s}
-.inp:focus{border-color:rgba(124,92,255,.5);box-shadow:0 0 0 3px rgba(124,92,255,.1)}
-.pf-out{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:12px;font-family:var(--mono);font-size:12px;color:var(--dim);min-height:60px;word-break:break-all;line-height:1.6}
-
-/* ── FAQ ── */
-.faq-list{display:flex;flex-direction:column;gap:4px;max-width:720px}
-.faq-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad);overflow:hidden}
-.faq-q{padding:14px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .15s;user-select:none}
-.faq-q:hover{background:var(--bg3)}
-.faq-q::after{content:'▾';font-size:11px;color:var(--dim);transition:transform .2s;flex-shrink:0;margin-left:12px}
-.faq-item.open .faq-q::after{transform:rotate(-180deg)}
-.faq-a{display:none;padding:0 18px 14px;font-size:13px;color:var(--dim);line-height:1.75}
-.faq-item.open .faq-a{display:block}
-
-/* ── ADMIN ── */
-.adm-grid{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start}
-.adm-login-wrap{max-width:400px;margin:40px auto 0}
-.adm-kpis{display:flex;gap:1px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad2);overflow:hidden;margin-bottom:16px}
-.adm-kpis .kpi{flex:1;padding:14px 18px;border-right:1px solid var(--line)}
-.adm-kpis .kpi:last-child{border-right:none}
-select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23545b75' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;background-size:18px;padding-right:30px}
-
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;border:none;white-space:nowrap}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-p{background:var(--brand);color:#fff}.btn-p:hover:not(:disabled){background:#6b4de0}
-.btn-y{background:var(--gold);color:#1a0f00;font-weight:800}.btn-y:hover:not(:disabled){background:#e5b535}
-.btn-g{background:var(--win-g);border:1px solid rgba(46,229,157,.35);color:var(--win)}.btn-g:hover:not(:disabled){background:rgba(46,229,157,.28)}
-.btn-r{background:var(--lose-g);border:1px solid rgba(255,77,109,.35);color:var(--lose)}.btn-r:hover:not(:disabled){background:rgba(255,77,109,.28)}
-.btn-s{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--dim)}.btn-s:hover:not(:disabled){color:var(--text);background:rgba(255,255,255,.1)}
-.btn-o{background:transparent;border:1px solid var(--line2);color:var(--dim)}.btn-o:hover:not(:disabled){color:var(--text)}
-.btn-fw{width:100%}
+#top-link{background:var(--brand);color:#fff;font-weight:700;font-size:12px;border-radius:7px;padding:5px 12px;transition:.15s;border:none;cursor:pointer}
+#top-link:hover{background:var(--brand2)}
+.kpi-row{display:flex;gap:12px;padding:16px 20px 4px}
+.kpi-card{flex:1;background:var(--brand);border-radius:var(--rad2);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;min-width:0;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 60%);pointer-events:none}
+.kpi-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.kpi-val{font-size:22px;font-weight:800;color:#fff;font-family:var(--mono);line-height:1}
+.kpi-icon{width:32px;height:32px;fill:rgba(255,255,255,.35);flex-shrink:0}
+.cf-controls{display:flex;align-items:center;gap:8px;padding:12px 20px 10px}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;transition:.15s;cursor:pointer;border:none}
+.btn-g{background:var(--brand);color:#fff}
+.btn-g:hover{background:var(--brand2)}
+.btn-s{background:var(--bg4);color:var(--dim);border:1px solid var(--line2)}
+.btn-s:hover{color:var(--text);background:var(--bg5)}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
-.btn-lg{padding:12px 20px;font-size:14px}
-
-/* ── SIDE SELECTION (coinflip) ── */
-.so-row{display:flex;gap:8px;margin-bottom:4px}
-.so{flex:1;padding:12px;border-radius:9px;border:2px solid var(--line);cursor:pointer;text-align:center;transition:.15s;font-weight:700;font-size:13px}
-.so.on[data-s="h"]{border-color:var(--gold);background:rgba(255,200,61,.1);color:var(--gold)}
-.so.on[data-s="t"]{border-color:var(--brand);background:var(--brand-g);color:var(--brand2)}
-.so-ic{font-size:22px;display:block;margin-bottom:4px}
-.side-dot{display:inline-block;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:900;line-height:18px;text-align:center;position:absolute;bottom:-2px;right:-2px;border:2px solid var(--bg2)}
-
-/* ── AVATAR ── */
-.ava{width:36px;height:36px;border-radius:50%;background:var(--brand-g);border:1px solid rgba(124,92,255,.35);display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--brand2);overflow:hidden;position:relative;flex-shrink:0}
+.cf-controls select{background:var(--bg3);color:var(--dim);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:600;margin-left:auto;cursor:pointer}
+#flips{display:flex;flex-direction:column;gap:6px;padding:0 20px 20px}
+.flip-row{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:10px 14px;display:flex;align-items:center;gap:10px;transition:.15s}
+.flip-row:hover{border-color:var(--line2);background:var(--bg4)}
+.flip-ava{width:36px;height:36px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--mute);overflow:hidden;flex-shrink:0}
+.vs-badge{font-size:10px;font-weight:800;color:var(--dim);letter-spacing:.05em;flex-shrink:0}
+.flip-pets{display:flex;gap:3px;flex-wrap:wrap;flex:1;min-width:0}
+.flip-pet{width:30px;height:30px;border-radius:6px;background:var(--bg4);border:1px solid var(--line);overflow:hidden}
+.flip-pet img{width:100%;height:100%;object-fit:cover}
+.flip-extra{font-size:11px;font-weight:700;color:var(--dim);background:var(--bg4);border:1px solid var(--line);border-radius:5px;padding:0 5px;height:30px;display:flex;align-items:center}
+.flip-score{display:flex;gap:4px;flex-shrink:0}
+.score-box{width:28px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--mono)}
+.score-w{background:var(--win-g);color:var(--win)}
+.score-l{background:var(--bg4);color:var(--dim)}
+.flip-view{background:var(--bg4);color:var(--dim);border:1px solid var(--line2);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;transition:.15s;flex-shrink:0;cursor:pointer;border:1px solid var(--line2)}
+.flip-view:hover{color:var(--brand);border-color:var(--brand)}
+.flip-val{font-size:11px;font-weight:700;font-family:var(--mono);color:var(--dim);flex-shrink:0}
+#pill-cf{display:none}
+#recent-h{padding:16px 20px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+#recent{padding:0 20px}
+.jp-wrap{padding:16px 20px}
+.jp-pot-card{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:20px;text-align:center;margin-bottom:16px}
+.jp-pot-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:6px}
+#jp-pot{font-size:36px;font-weight:900;color:var(--gold);font-family:var(--mono)}
+#jp-status{font-size:12px;color:var(--dim);margin-top:4px}
+.jp-spin-wrap{position:relative;width:100%;max-width:500px;margin:0 auto 20px;background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);overflow:hidden;height:60px}
+#jp-strip{display:flex;align-items:center;height:100%;transition:transform .6s cubic-bezier(.25,.8,.25,1)}
+#jp-bar{height:3px;background:linear-gradient(90deg,transparent,var(--brand),transparent);position:absolute;bottom:0;left:0;right:0}
+.jp-entry{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.jp-eava{width:30px;height:30px;border-radius:50%;background:var(--bg4);overflow:hidden;flex-shrink:0;font-size:12px;display:flex;align-items:center;justify-content:center}
+.jp-eval{font-size:12px;font-family:var(--mono);color:var(--dim);margin-left:auto}
+.jp-chance-badge{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-g);border-radius:5px;padding:2px 7px}
+#jp-sel-count,#jp-sum,#jp-chance,#jp-locked-msg{font-size:12px;color:var(--dim)}
+#jp-roll,#jp-join{margin-top:12px}
+#jp-ecount{font-size:12px;color:var(--dim)}
+.up-wrap{padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.up-panes{display:flex;gap:16px}
+.up-pane{flex:1;background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:16px}
+.up-pane-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:10px}
+#up-mult{font-size:28px;font-weight:900;color:var(--gold);text-align:center;font-family:var(--mono)}
+#up-chance{font-size:14px;font-weight:700;color:var(--brand);text-align:center;margin-top:4px}
+#up-res{margin-top:12px;text-align:center;font-size:14px;font-weight:700;min-height:20px}
+.hist-wrap{padding:16px 20px}
+#hist{width:100%;border-collapse:collapse}
+#hist th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);padding:6px 10px;text-align:left;border-bottom:1px solid var(--line)}
+#hist td{padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px}
+.tag{display:inline-flex;align-items:center;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700}
+.tag.w{background:var(--win-g);color:var(--win)}
+.tag.l{background:var(--lose-g);color:var(--lose)}
+.mono{font-family:var(--mono)}
+.fair-wrap{padding:16px 20px;max-width:600px}
+.fair-block{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:16px;margin-bottom:12px}
+.fair-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:6px}
+.fair-input{width:100%;background:var(--bg4);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;margin-bottom:8px;font-family:var(--mono)}
+.faq-wrap{padding:16px 20px;max-width:680px}
+.faq-item{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:16px;margin-bottom:8px}
+.faq-q{font-weight:700;font-size:14px;margin-bottom:6px}
+.faq-a{color:var(--dim);font-size:13px;line-height:1.6}
+.adm-wrap{padding:16px 20px}
+#adm-login{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:20px;max-width:400px}
+#adm-panel{display:none}
+.adm-section{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad2);padding:16px;margin-bottom:12px}
+.adm-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:12px}
+.adm-label{font-size:12px;font-weight:600;color:var(--dim);margin-bottom:4px}
+.adm-input{width:100%;background:var(--bg4);border:1px solid var(--line2);border-radius:7px;padding:7px 10px;color:var(--text);font-size:13px;margin-bottom:8px}
+.adm-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+#adm-err,#adm-perr,#adm-cerr,#adm-serr{font-size:12px;color:var(--lose);min-height:16px;padding:2px 0}
+#adm-prev{width:60px;height:60px;border-radius:10px;background:var(--bg4);border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:24px}
+.adm-kpis-row{display:flex;gap:8px;margin-bottom:12px}
+.adm-kpi{background:var(--bg4);border:1px solid var(--line);border-radius:8px;padding:10px 14px;flex:1}
+.adm-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:3px}
+.adm-kpi-val{font-size:16px;font-weight:800;font-family:var(--mono)}
+#adm-staff-card{margin-top:8px;background:var(--bg4);border:1px solid var(--line);border-radius:8px;padding:10px;display:none}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+.ov{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center}
+.ov.on{display:flex}
+.ov-box{background:var(--bg3);border:1px solid var(--line2);border-radius:16px;width:min(520px,96vw);max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.6)}
+.ov-head{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line);flex-shrink:0}
+.ov-head-title{font-size:15px;font-weight:800;flex:1}
+.ov-close{width:28px;height:28px;border-radius:7px;background:var(--bg4);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);font-size:16px;line-height:1;transition:.15s}
+.ov-close:hover{background:var(--bg5);color:var(--text)}
+.ov-body{padding:16px 18px;overflow-y:auto;flex:1}
+.sides-row{display:flex;gap:8px;margin-bottom:14px}
+.side-btn{flex:1;border-radius:10px;padding:12px;border:2px solid var(--mute);background:var(--bg4);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.15s;font-size:13px;font-weight:700;color:var(--dim)}
+.side-btn:hover{border-color:var(--line2);color:var(--text)}
+.side-btn.on{border-color:var(--brand);background:var(--brand-g);color:var(--brand)}
+.ov-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:6px;margin-top:12px}
+.ov-input{width:100%;background:var(--bg4);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px}
+.ov-input:focus{border-color:var(--brand)}
+.cr-sum-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.cr-sum-label{font-size:12px;color:var(--dim)}
+#cr-sum{font-size:14px;font-weight:800;font-family:var(--mono);flex:1}
+.ov-foot{padding:14px 18px;border-top:1px solid var(--line);flex-shrink:0;display:flex;gap:8px;justify-content:flex-end}
+.dep-tabs{display:flex;gap:4px;margin-bottom:14px}
+.dep-tab{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:var(--dim);border:1px solid transparent;transition:.15s}
+.dep-tab.on{background:var(--brand-g);color:var(--brand);border-color:var(--brand)}
+.dep-tab:hover:not(.on){background:var(--bg4);color:var(--text)}
+.dep-pane{display:none}.dep-pane.on{display:block}
+.dep-bot-row{display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg4);border:1px solid var(--line);border-radius:8px;margin-bottom:6px}
+.dep-bot-ava{width:28px;height:28px;border-radius:50%;background:var(--bg5);overflow:hidden;flex-shrink:0;font-size:11px;display:flex;align-items:center;justify-content:center}
+.dep-bot-name{font-size:13px;font-weight:600;flex:1}
+.dep-bot-status{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px}
+.dep-bot-status.on{background:var(--win-g);color:var(--win)}
+.dep-bot-status.off{background:var(--bg5);color:var(--dim)}
+.dep-bot-copy{background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
+.dep-bot-copy:hover{color:var(--brand)}
+.wd-sel{display:flex;flex-wrap:wrap;gap:6px;max-height:200px;overflow-y:auto;margin-bottom:10px}
+.wd-sum-row{display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--line);margin-top:4px}
+#wdbot-sub{font-size:13px;color:var(--dim);margin-bottom:10px}
+.inv-head-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.inv-ava-lg{width:52px;height:52px;border-radius:50%;background:var(--bg4);border:2px solid var(--mute);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.inv-name-lg{font-size:16px;font-weight:800}
+.inv-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.inv-sort-sel{background:var(--bg4);border:1px solid var(--line2);border-radius:7px;padding:6px 10px;color:var(--dim);font-size:12px;cursor:pointer}
+.inv-cats-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.inv-cat{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--line);color:var(--dim);transition:.15s}
+.inv-cat.on,.inv-cat:hover{background:var(--brand-g);color:var(--brand);border-color:var(--brand)}
+#inv-grid{display:flex;flex-wrap:wrap;gap:6px;max-height:260px;overflow-y:auto}
+.inv-totals{display:flex;gap:16px;padding-top:10px;border-top:1px solid var(--line);margin-top:8px}
+.inv-total-label{font-size:11px;color:var(--dim);margin-bottom:2px}
+.inv-total-val{font-size:14px;font-weight:800;font-family:var(--mono)}
+#vals-grid{display:flex;flex-wrap:wrap;gap:6px;max-height:380px;overflow-y:auto}
+#pf-card{margin-bottom:14px}
+.pf-seed-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.pf-nonce-row{display:flex;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--line);margin-top:8px}
+.pf-nonce-label{font-size:12px;color:var(--dim)}
+#pf-nonce{font-family:var(--mono);font-size:14px;font-weight:700}
+.pf-actions{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+#room-title{font-size:14px;font-weight:800;margin-bottom:4px}
+#room-sub{font-size:12px;color:var(--dim);margin-bottom:14px}
+.room-sides{display:flex;gap:12px;margin-bottom:14px}
+.room-side{flex:1;background:var(--bg4);border-radius:10px;padding:12px;min-height:80px}
+.room-side-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:8px}
+.room-pets{display:flex;flex-wrap:wrap;gap:4px}
+.room-result{padding:12px;background:var(--bg4);border-radius:8px;text-align:center;min-height:40px;margin-bottom:10px}
+#room-res{font-size:16px;font-weight:800}
+#room-fair{font-size:11px;color:var(--dim);margin-top:4px}
+.lk-step{display:none}.lk-step.on{display:block}
+.lk-user-row{display:flex;gap:8px;margin-bottom:10px}
+.lk-phrase-box{background:var(--bg4);border:1px solid var(--line2);border-radius:8px;padding:12px;text-align:center;margin:10px 0}
+#lk-phrase{font-size:20px;font-weight:900;letter-spacing:.12em;color:var(--brand);font-family:var(--mono)}
+#lk-timer{font-size:12px;color:var(--dim);margin-top:6px}
+.lk-done-box{text-align:center;padding:16px 0}
+#lk-done-name{font-size:16px;font-weight:800;margin-bottom:6px}
+#lk-err1,#lk-err2{font-size:12px;color:var(--lose);min-height:16px;padding:2px 0}
+.chip{width:36px;height:36px;border-radius:8px;background:var(--bg4);border:1px solid var(--line);overflow:hidden;cursor:pointer;position:relative;transition:.15s;flex-shrink:0}
+.chip:hover{border-color:var(--line2);transform:scale(1.05)}
+.chip.sel{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-g)}
+.chip img{width:100%;height:100%;object-fit:cover}
+.chip-qty{position:absolute;bottom:1px;right:2px;font-size:9px;font-weight:800;color:var(--text);text-shadow:0 1px 2px rgba(0,0,0,.8);font-family:var(--mono)}
+.chips{display:flex;gap:3px;flex-wrap:wrap}
+.who{display:flex;align-items:center;gap:8px}
+.ava{width:28px;height:28px;border-radius:50%;background:var(--bg4);overflow:hidden;font-size:11px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
 .ava img{width:100%;height:100%;object-fit:cover}
-.ava.bot{background:rgba(255,200,61,.1);border-color:rgba(255,200,61,.35);color:var(--gold)}
-.ava.open{background:var(--bg3);color:var(--mute)}
+.ava .dot{position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--bg3)}
+.ava .h-dot{background:var(--heads)}
+.ava .t-dot{background:var(--tails)}
+.ava.you{border:2px solid var(--brand)}
 .n{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .s{font-size:11px;color:var(--dim)}
-.v{font-family:var(--mono);font-weight:700;font-size:12px;display:flex;align-items:center;gap:3px}
-
-/* ── CHIPS ── */
-.chips{display:flex;flex-wrap:wrap;gap:3px}
-.chip{width:30px;height:30px;border-radius:6px;background:var(--bg3);border:1px solid var(--line);display:grid;place-items:center;font-size:14px;overflow:hidden}
-.chip img{width:100%;height:100%;object-fit:contain}
-.chip.r-garg{border-color:rgba(255,107,53,.35)}.chip.r-titan{border-color:rgba(192,132,252,.35)}.chip.r-huge{border-color:rgba(96,165,250,.35)}
-.chip.more{font-size:10px;font-weight:800;color:var(--dim)}
-
-/* ── EMPTY STATE ── */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;text-align:center;gap:8px}
-.empty .ic{font-size:40px;line-height:1}
-.empty h3{font-size:15px;font-weight:700}
-.empty p{font-size:13px;color:var(--dim);max-width:280px;line-height:1.6}
-
-/* ── OVERLAYS ── */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.ov.on{display:flex;animation:ovfade .2s ease}
-@keyframes ovfade{from{opacity:0}to{opacity:1}}
-.ov-box{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--rad2);width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;animation:ovslide .2s ease}
-@keyframes ovslide{from{transform:translateY(12px)}to{transform:none}}
-.ov-box.sm{max-width:440px}
-.ov-box.md{max-width:600px}
-.ov-box.lg{max-width:800px}
-.ov-box.xl{max-width:980px}
-.ov-hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center}
-.ov-ttl{font-size:15px;font-weight:800}
-.ov-x{margin-left:auto;width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--dim);font-size:16px;line-height:1;display:grid;place-items:center;transition:.15s}
-.ov-x:hover{background:rgba(255,255,255,.12);color:var(--text)}
-.ov-bd{padding:20px;overflow-y:auto;flex:1}
-.ov-ft{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
-.ov-row{display:flex;gap:8px;margin-bottom:12px}
-.pick-info{background:var(--bg3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;border:1px solid var(--line)}
-.pick-sel{font-weight:700;font-family:var(--mono);display:flex;align-items:center;gap:4px}
-
-/* ── LINK STEPS ── */
-.lk-steps{display:flex;gap:0;margin-bottom:20px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.lk-step{flex:1;padding:10px;text-align:center;background:var(--bg3);border-right:1px solid var(--line);cursor:default}
-.lk-step:last-child{border-right:none}
-.lk-step.on{background:var(--brand-g)}
-.lk-num{width:20px;height:20px;border-radius:50%;background:var(--mute);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;margin:0 auto 4px}
-.lk-step.on .lk-num{background:var(--brand)}
-.lk-step small{font-size:10px;font-weight:600;color:var(--dim)}
-.lk-phrase-box{background:var(--bg3);border:1px solid var(--brand);border-radius:8px;padding:14px;font-family:var(--mono);font-size:15px;font-weight:700;color:var(--brand2);text-align:center;letter-spacing:.5px;margin:10px 0}
-.lk-timer{font-size:12px;color:var(--gold);font-family:var(--mono);font-weight:700}
-.lk-sub{font-size:11px;color:var(--dim);font-weight:600;margin-bottom:12px}
-.lk-card{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.lk-card .pic{width:40px;height:40px;border-radius:50%;background:var(--brand-g);display:grid;place-items:center;font-size:17px;font-weight:700;color:var(--brand2);overflow:hidden;flex-shrink:0}
-.lk-card .pic img{width:100%;height:100%;object-fit:cover}
-.lk-card b{display:block;font-size:14px}
-.lk-card small{font-size:11px;color:var(--dim)}
-.err{font-size:12px;color:var(--lose);display:block;margin-bottom:8px}
-.done-wrap{text-align:center;padding:20px 0}
-.done-ico{font-size:48px;margin-bottom:12px}
-.done-title{font-size:18px;font-weight:800;margin-bottom:4px}
-.done-sub{font-size:13px;color:var(--dim)}
-
-/* ── DEPOSIT / WITHDRAW ── */
-.dep-tabs{display:flex;border-bottom:1px solid var(--line);margin:0 -20px;padding:0 20px}
-.dep-tab{padding:10px 16px;font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
-.dep-tab.on{color:var(--brand2);border-bottom-color:var(--brand)}
-.bot-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
-.bot-row:last-child{border-bottom:none}
-.bot-row .n{font-size:13px;font-weight:600}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--win);display:inline-block;margin-left:4px}
-.dot.off{background:var(--lose)}
-.dep-info{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:12px}
-.dep-info b{color:var(--text)}
-
-/* ── PROFILE ── */
-.pf-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.pf-ava-lg{width:52px;height:52px;border-radius:50%;background:var(--brand-g);border:2px solid rgba(124,92,255,.4);display:grid;place-items:center;font-size:22px;font-weight:700;color:var(--brand2);overflow:hidden}
-.pf-ava-lg img{width:100%;height:100%;object-fit:cover}
-.pf-name{font-size:17px;font-weight:800}
-.pf-sub{font-size:12px;color:var(--dim)}
-.pf-seed-row{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;word-break:break-all;color:var(--dim)}
-
-/* ── ROOM / COIN ── */
-.room-wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;min-height:300px}
-.room-side{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 20px;transition:.3s}
-.room-side.won{background:rgba(46,229,157,.07)}
-.room-side.lost{background:rgba(255,77,109,.07);opacity:.7}
-.room-side .ava{width:52px;height:52px;font-size:20px}
-.room-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 24px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
-.result{font-size:28px;font-weight:900;min-height:40px;text-align:center;transition:.3s}
-.result.w{color:var(--win)}.result.l{color:var(--lose)}
-.room-fair-info{font-size:11px;color:var(--dim);max-width:280px;text-align:center;word-break:break-all;line-height:1.6;font-family:var(--mono)}
-
-/* ── 3D COIN ── */
-#coin{width:70px;height:70px;position:relative;transform-style:preserve-3d;transition:transform 3.2s cubic-bezier(.15,.75,.25,1)}
-.face{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:900;backface-visibility:hidden}
-.face.h{background:linear-gradient(135deg,#ffc83d,#e5a800);box-shadow:0 0 20px rgba(255,200,61,.4);color:#5a3d00}
-.face.t{background:linear-gradient(135deg,#8b6cff,#5b3fe0);box-shadow:0 0 20px rgba(124,92,255,.4);color:#fff;transform:rotateY(180deg)}
-
-/* ── INVENTORY ── */
-.inv-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.inv-ava{width:44px;height:44px;border-radius:50%;background:var(--brand-g);border:2px solid rgba(124,92,255,.35);display:grid;place-items:center;font-size:18px;font-weight:700;color:var(--brand2);overflow:hidden;flex-shrink:0}
-.inv-ava img{width:100%;height:100%;object-fit:cover}
-.inv-stats{display:flex;gap:16px;margin-bottom:14px;padding:12px 16px;background:var(--bg3);border-radius:8px;border:1px solid var(--line)}
-.inv-stat small{font-size:10px;color:var(--dim);display:block;font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
-.inv-stat b{font-size:15px;font-weight:800;font-family:var(--mono);display:flex;align-items:center;gap:3px}
-.inv-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.cat{padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--dim);font-size:11px;font-weight:700;cursor:pointer;transition:.12s}
-.cat.on{background:var(--brand-g);border-color:rgba(124,92,255,.35);color:var(--brand2)}
-.cat i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
-.inv-controls{display:flex;gap:8px;margin-bottom:14px}
-.inv-controls .inp{flex:1}
-
-/* ── TOAST ── */
-#toasts{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{padding:11px 16px;background:var(--bg3);border:1px solid var(--line2);border-radius:9px;font-size:13px;font-weight:600;animation:tst .25s ease;max-width:320px;pointer-events:all;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.toast.ok{border-color:rgba(46,229,157,.4);background:rgba(46,229,157,.1);color:var(--win)}
-.toast.bad{border-color:rgba(255,77,109,.4);background:rgba(255,77,109,.1);color:var(--lose)}
-@keyframes tst{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* ── GEM SVG ── */
-svg.gem{width:14px;height:14px;vertical-align:-2px;flex-shrink:0}
-.ph{width:34px;height:34px;border-radius:6px;background:var(--bg4);display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:var(--mute)}
-
-/* ── SPIN ── */
-.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── SEARCH ── */
-.search-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
-.search-row .inp{flex:1}
+.empty{text-align:center;padding:40px 20px;color:var(--dim)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.empty-sub{font-size:13px;line-height:1.6}
+.coin-wrap{text-align:center;padding:20px 0}
+#coin{width:80px;height:80px;margin:0 auto 16px;position:relative;transform-style:preserve-3d;transition:transform .6s}
+.face{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;backface-visibility:hidden;border:3px solid}
+.face.h{background:var(--gold-g);border-color:var(--gold);color:var(--gold)}
+.face.t{background:var(--brand-g);border-color:var(--brand);color:var(--brand);transform:rotateY(180deg)}
+.wheel-wrap{position:relative;width:200px;height:200px;margin:0 auto}
+#wheel{width:100%;height:100%;border-radius:50%;overflow:hidden;border:3px solid var(--line2)}
+#arc-win{background:var(--brand)}
+#arc-lose{background:var(--lose)}
+#needle{position:absolute;top:50%;left:50%;width:4px;height:40%;background:var(--text);transform-origin:bottom center;transform:translate(-50%,-100%);border-radius:2px 2px 0 0}
+#rs-a,#rs-b{display:flex;flex-wrap:wrap;gap:4px;min-width:0;flex:1}
+.so-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:4px}
+#so-h{color:var(--heads)}
+#so-t{color:var(--tails)}
+#toasts{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;animation:tslide .2s ease;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast.ok{border-left:3px solid var(--brand);color:var(--brand)}
+.toast.err{border-left:3px solid var(--lose);color:var(--lose)}
+@keyframes tslide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#cf-count{display:none}
+#up-in,#up-out{display:flex;flex-wrap:wrap;gap:6px;min-height:50px}
+#up-inv{max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px}
+#up-tgts{max-height:200px;overflow-y:auto}
+.up-tgt{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg4);border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:.15s;margin-bottom:4px}
+.up-tgt:hover{border-color:var(--line2);background:var(--bg5)}
+.up-tgt.on{border-color:var(--brand);background:var(--brand-g)}
+.up-tgt-img{width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--bg5)}
+.up-tgt-img img{width:100%;height:100%;object-fit:cover}
+#up-tgt-name{font-size:13px;font-weight:700}
+#up-q1,#up-q2{font-size:12px;color:var(--dim)}
+#nav-admin{display:none}
+.page{padding-bottom:40px}
 </style>
 </head>
 <body>
 <div id="wrap">
-
-<!-- ══ SIDEBAR ══ -->
-<nav id="sidebar">
-  <div class="logo">
-    <div class="logo-mark">🎰</div>
-    <div>
-      <div class="logo-text">PetFlip</div>
-      <div class="logo-badge">PS99 CASINO</div>
+  <nav id="sidebar">
+    <div class="sid-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.5 2 5.5 4.5 5.5 8c0 1.5.5 2.9 1.4 4L4 20h16l-2.9-8C18 10.9 18.5 9.5 18.5 8c0-3.5-3-6-6.5-6zm0 2c2.5 0 4.5 1.8 4.5 4 0 .8-.2 1.6-.6 2.2L12 12 8.1 10.2C7.7 9.6 7.5 8.8 7.5 8c0-2.2 2-4 4.5-4z"/></svg>
     </div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-label">Games</div>
-    <button class="nav" data-p="coinflip"><span class="nav-ico">🪙</span>Coinflip<span class="cf-pill nav-pill" id="pill-cf" style="display:none">0</span></button>
-    <button class="nav" data-p="jackpot"><span class="nav-ico">🎰</span>Jackpot</button>
-    <button class="nav" data-p="upgrader"><span class="nav-ico">⬆️</span>Upgrader</button>
-    <div class="nav-sep"></div>
-    <div class="nav-label">Account</div>
-    <button class="nav" data-p="history"><span class="nav-ico">📋</span>History</button>
-    <button class="nav" data-p="fair"><span class="nav-ico">🔐</span>Provably Fair</button>
-    <button class="nav" data-p="faq"><span class="nav-ico">❓</span>FAQ</button>
-    <button class="nav" data-p="admin" id="nav-admin"><span class="nav-ico">⚙️</span>Admin</button>
-  </div>
-  <div class="sid-bottom">
-    <div class="sid-bal">
-      <div class="sid-bal-lbl">Inventory Value</div>
-      <div class="sid-bal-val" id="top-bal">
-        <svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>0
+    <div class="sid-ava" onclick="openProfile()" title="Profile">
+      <span>👤</span>
+      <div class="sid-online"></div>
+    </div>
+    <div class="sid-sep"></div>
+    <div class="sid-label">Home</div>
+    <div class="nav on" data-p="coinflip" onclick="go('coinflip')" title="Coinflip">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>
+    </div>
+    <div class="sid-sep"></div>
+    <div class="sid-label">Games</div>
+    <div class="nav" data-p="jackpot" onclick="go('jackpot')" title="Jackpot">
+      <svg viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5a2 2 0 0 0-4 0H7.5a4 4 0 0 1 8 0c0 2.5-3 2.75-3 5z"/></svg>
+    </div>
+    <div class="nav" data-p="upgrader" onclick="go('upgrader')" title="Upgrader">
+      <svg viewBox="0 0 24 24"><path d="M4 15l8-8 8 8H4z"/></svg>
+    </div>
+    <div class="sid-sep"></div>
+    <div class="sid-label">Acct</div>
+    <div class="nav" data-p="history" onclick="go('history')" title="History">
+      <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+    </div>
+    <div class="nav" data-p="fair" onclick="go('fair')" title="Provably Fair">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+    </div>
+    <div class="nav" data-p="faq" onclick="go('faq')" title="FAQ">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    </div>
+    <div class="nav" id="nav-admin" data-p="admin" onclick="go('admin')" title="Admin">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    </div>
+  </nav>
+
+  <div id="main-col">
+    <div id="topbar">
+      <div id="topbar-left">
+        <span id="pg-title" style="font-weight:800;font-size:15px">Coinflip</span>
+        <span style="color:var(--mute2);margin:0 4px">·</span>
+        <span id="pg-sub" style="font-size:12px;color:var(--dim)">Double your pets, 50/50</span>
       </div>
-    </div>
-    <div class="sid-actions">
-      <button class="btn-dep" onclick="openDep()">Deposit</button>
-      <button class="btn-wd" onclick="openWd()">Withdraw</button>
-    </div>
-  </div>
-</nav>
-
-<!-- ══ RIGHT COLUMN ══ -->
-<div id="main-col">
-
-  <!-- TOPBAR -->
-  <header id="topbar">
-    <div class="tb-page">
-      <div class="tb-page-name" id="pg-title">Coinflip</div>
-      <div class="tb-page-sub" id="pg-sub">Double your pets, 50/50</div>
-    </div>
-    <div class="tb-sep"></div>
-    <div id="kpis"></div>
-    <div class="tb-right">
-      <button class="btn btn-s btn-sm" onclick="openValues()">Values</button>
-      <button class="btn btn-s btn-sm" onclick="openInv()">Inventory</button>
-      <div id="top-ava" onclick="openProfile()" style="display:none"></div>
-      <button class="top-btn top-btn-link" id="top-link" onclick="openLink()">Link Account</button>
-    </div>
-  </header>
-
-  <!-- CONTENT -->
-  <div id="content">
-
-    <!-- ══ COINFLIP ══ -->
-    <div class="page on pad" id="p-coinflip">
-      <div id="kpis2"></div>
-      <div class="cf-top">
-        <div class="cf-top-left">
-          <div class="cf-title">Open Flips</div>
-          <div class="cf-count-wrap">
-            <span class="cf-pill" id="cf-count">0</span>
-          </div>
+      <div id="topbar-right">
+        <div class="top-bal-wrap" onclick="openInv()">
+          <svg class="gem-icon" viewBox="0 0 24 24"><path d="M6.5 2h11l4.5 7L12 22 2 9l4.5-7z"/></svg>
+          <span id="top-bal" style="font-weight:700;font-size:13px;font-family:var(--mono)">0</span>
         </div>
-        <button class="btn-create" onclick="openCreate()">+ Create Flip</button>
-      </div>
-      <div id="flips"></div>
-      <div class="recent-hd" id="recent-h" style="display:none">Recent Results</div>
-      <div id="recent"></div>
-    </div>
-
-    <!-- ══ JACKPOT ══ -->
-    <div class="page pad" id="p-jackpot">
-      <div class="ph"><h1>Jackpot</h1><p>Add your pets to the pot — chance to win it all</p></div>
-      <div class="jp-wrap">
-        <div class="jp-left">
-          <!-- Pot summary card -->
-          <div class="card">
-            <div class="card-hd"><span>Current Pot</span></div>
-            <div class="card-bd">
-              <div class="jp-pot-val"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg><span id="jp-pot">0</span></div>
-              <div class="jp-stats">
-                <div class="jp-stat"><b id="jp-ecount">0</b><small>Entries</small></div>
-                <div class="jp-stat"><b id="jp-chance">—</b><small>Your Chance</small></div>
-              </div>
-              <!-- arc chart -->
-              <div class="jp-arc-wrap">
-                <svg width="140" height="140" viewBox="0 0 280 280">
-                  <circle cx="140" cy="140" r="122" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="20"/>
-                  <circle id="jp-arc-lose" cx="140" cy="140" r="122" fill="none" stroke="var(--lose)" stroke-width="20" stroke-dasharray="0 767" stroke-dashoffset="192" stroke-linecap="round"/>
-                  <circle id="jp-arc-win" cx="140" cy="140" r="122" fill="none" stroke="var(--win)" stroke-width="20" stroke-dasharray="0 767" stroke-dashoffset="192" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="jp-bar-wrap"><div id="jp-bar"></div></div>
-              <div class="jp-status-txt" id="jp-status">Select pets and join the pot</div>
-            </div>
-            <div class="jp-btns">
-              <button class="btn btn-y" id="jp-join" onclick="jpDoJoin()">Join Pot</button>
-              <div id="jp-locked-msg" style="display:none;flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--gold);padding:8px">🔒 Locked in</div>
-              <button class="btn btn-p" id="jp-roll" style="display:none" onclick="jpRoll()">Roll</button>
-            </div>
-          </div>
-
-          <!-- Strip spinner -->
-          <div class="card">
-            <div class="card-hd"><span>Spin</span></div>
-            <div class="strip-wrap">
-              <div class="strip-tick"></div>
-              <div id="jp-strip"></div>
-            </div>
-          </div>
-
-          <!-- Entries -->
-          <div class="card" style="flex:1">
-            <div class="card-hd"><span>Entries</span> <span id="jp-ecount" style="display:none"></span></div>
-            <div class="jp-entries-wrap">
-              <div id="jp-entries"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="jp-right">
-          <!-- Picker -->
-          <div class="card" style="flex:1">
-            <div class="card-hd"><span>Select Pets</span></div>
-            <div class="jp-picker-inner">
-              <div class="jp-picker-top">
-                <input class="inp" id="jp-q" placeholder="Search pets…" oninput="renderJpPicker()" style="flex:1">
-              </div>
-              <div class="pick-info">
-                <span class="jp-sel-info"><b id="jp-sel-count">0 selected</b></span>
-                <span style="margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:700;display:flex;align-items:center;gap:4px"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg><span id="jp-sum">0</span></span>
-              </div>
-              <div id="jp-picker" style="max-height:420px;overflow-y:auto"></div>
-            </div>
-          </div>
-        </div>
+        <button class="btn-wallet" onclick="openDep()">Deposit</button>
+        <div id="top-ava" onclick="openProfile()" style="width:30px;height:30px;border-radius:50%;background:var(--bg4);border:2px solid var(--mute);overflow:hidden;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:12px"></div>
+        <button id="top-link" onclick="openLink()" style="background:var(--brand);color:#fff;font-weight:700;font-size:12px;border-radius:7px;padding:5px 12px;border:none;cursor:pointer">Link Account</button>
       </div>
     </div>
 
-    <!-- ══ UPGRADER ══ -->
-    <div class="page pad" id="p-upgrader">
-      <div class="ph"><h1>Upgrader</h1><p>Risk your pets for a rarer one</p></div>
-      <div class="up-wrap">
-        <!-- Left: Inventory -->
-        <div>
-          <div class="up-panel-hd">
-            Your Inventory
-            <span id="up-sel-count">0 selected</span>
+    <div id="content">
+      <!-- COINFLIP -->
+      <div id="p-coinflip" class="page on">
+        <div id="kpis" class="kpi-row">
+          <div class="kpi-card">
+            <div><div class="kpi-label">Open Matches</div><div class="kpi-val">—</div></div>
+            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/></svg>
           </div>
-          <div class="search-row">
-            <input class="inp" id="up-q1" placeholder="Search…" oninput="renderUpInv()">
+          <div class="kpi-card">
+            <div><div class="kpi-label">Total Value</div><div class="kpi-val">—</div></div>
+            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M6.5 2h11l4.5 7L12 22 2 9l4.5-7z"/></svg>
           </div>
-          <div id="up-inv" style="max-height:calc(100vh - 260px);overflow-y:auto"></div>
+          <div class="kpi-card">
+            <div><div class="kpi-label">Items</div><div class="kpi-val">—</div></div>
+            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1a3 3 0 0 0-6 0c0 .12.11.56.18 1H10c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h10c.55 0 1-.45 1-1V7c0-.55-.45-1-1-1z"/></svg>
+          </div>
         </div>
+        <div class="cf-controls">
+          <button class="btn btn-g" onclick="openCreate()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Create
+          </button>
+          <button class="btn btn-s" onclick="go('history')">History</button>
+          <span id="pill-cf"></span>
+          <select onchange="sortFlips(this.value)">
+            <option value="desc">Highest to Lowest</option>
+            <option value="asc">Lowest to Highest</option>
+            <option value="new">Newest First</option>
+          </select>
+        </div>
+        <div id="cf-count"></div>
+        <div id="flips"></div>
+        <div id="recent-h"></div>
+        <div id="recent"></div>
+      </div>
 
-        <!-- Mid: Wheel + Stats -->
-        <div class="up-mid">
-          <div class="wheel-wrap">
-            <div id="wheel">
-              <svg class="wheel-svg" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="18"/>
-                <circle id="arc-lose" cx="100" cy="100" r="90" fill="none" stroke="var(--lose)" stroke-width="18" stroke-dasharray="0 565" stroke-dashoffset="141" stroke-linecap="round" style="transition:.4s"/>
-                <circle id="arc-win" cx="100" cy="100" r="90" fill="none" stroke="var(--win)" stroke-width="18" stroke-dasharray="0 565" stroke-dashoffset="141" stroke-linecap="round" style="transition:.4s"/>
-                <circle cx="100" cy="100" r="70" fill="var(--bg2)"/>
-              </svg>
+      <!-- JACKPOT -->
+      <div id="p-jackpot" class="page">
+        <div class="jp-wrap">
+          <div class="jp-pot-card">
+            <div class="jp-pot-label">Current Jackpot</div>
+            <div id="jp-pot">0</div>
+            <div id="jp-status">Waiting for players…</div>
+          </div>
+          <div class="jp-spin-wrap"><div id="jp-strip"></div><div id="jp-bar"></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div id="jp-ecount"></div>
+            <button id="jp-roll" class="btn btn-g btn-sm" onclick="jpRoll()" style="display:none">Roll</button>
+          </div>
+          <div id="jp-entries"></div>
+          <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span id="jp-sel-count"></span>
+              <span id="jp-sum" style="margin-left:auto;font-family:var(--mono);font-size:13px"></span>
+            </div>
+            <div id="jp-chance"></div>
+            <div id="jp-locked-msg"></div>
+            <div id="jp-picker"></div>
+            <div style="display:none">
+              <canvas id="wheel" width="200" height="200"></canvas>
+              <div id="arc-win"></div>
+              <div id="arc-lose"></div>
               <div id="needle"></div>
             </div>
-          </div>
-          <div class="up-stats">
-            <div class="up-stat">
-              <div class="up-stat-lbl">In Value</div>
-              <div class="up-stat-val" id="up-in" style="display:flex;align-items:center;gap:4px;justify-content:center"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>0</div>
+            <div id="jp-q" style="display:flex;gap:8px">
+              <div id="jp-arc-win" style="display:none"></div>
+              <div id="jp-arc-lose" style="display:none"></div>
             </div>
-            <div class="up-stat">
-              <div class="up-stat-lbl">Out Value</div>
-              <div class="up-stat-val" id="up-out" style="display:flex;align-items:center;gap:4px;justify-content:center"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>0</div>
-            </div>
-            <div class="up-stat">
-              <div class="up-stat-lbl">Chance</div>
-              <div class="up-stat-val" id="up-chance" style="color:var(--win)">—</div>
-            </div>
-            <div class="up-stat">
-              <div class="up-stat-lbl">Multiplier</div>
-              <div class="up-stat-val" id="up-mult" style="color:var(--gold)">—</div>
-            </div>
-          </div>
-          <div class="up-tgt-info">Target: <b id="up-tgt-name">none selected</b></div>
-          <div style="display:flex;flex-direction:column;gap:6px;width:100%">
-            <div class="qm-btns" style="justify-content:center">
-              <button class="qm-btn" onclick="quickMult(1.5)">1.5×</button>
-              <button class="qm-btn" onclick="quickMult(2)">2×</button>
-              <button class="qm-btn" onclick="quickMult(3)">3×</button>
-              <button class="qm-btn" onclick="quickMult(5)">5×</button>
-              <button class="qm-btn" onclick="quickMult(10)">10×</button>
-            </div>
-            <button class="btn btn-p btn-fw btn-lg" id="up-go" onclick="doUpgrade()" disabled>Upgrade</button>
-          </div>
-          <div id="up-res"></div>
-        </div>
-
-        <!-- Right: Targets -->
-        <div>
-          <div class="up-panel-hd">
-            Target Pets
-          </div>
-          <div class="search-row">
-            <input class="inp" id="up-q2" placeholder="Search…" oninput="renderUpTargets()">
-          </div>
-          <div id="up-tgts" style="max-height:calc(100vh - 260px);overflow-y:auto"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ HISTORY ══ -->
-    <div class="page pad" id="p-history">
-      <div class="ph"><h1>History</h1><p>Your coinflips, jackpots and upgrades</p></div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Game</th><th>Time</th><th>Wager</th><th>Payout</th><th>Result</th><th>Roll</th><th></th></tr>
-          </thead>
-          <tbody id="hist">
-            <tr><td colspan="7"><div class="empty" style="padding:36px 20px"><div class="ic">🕓</div><h3>No games yet</h3><p>Your coinflips, jackpots and upgrades appear here with full provably-fair data.</p></div></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ PROVABLY FAIR ══ -->
-    <div class="page pad" id="p-fair">
-      <div class="ph"><h1>Provably Fair</h1><p>Verify every game outcome independently</p></div>
-      <div class="pf-grid">
-        <div class="pf-card">
-          <h3>How it Works</h3>
-          <div class="pf-info">
-            Each game uses a server seed (pre-committed as a hash), your client seed, and a nonce. The roll is derived from <code>HMAC-SHA256(serverSeed, clientSeed:nonce)</code>. After the game, the server seed is revealed so you can independently verify the outcome.
-          </div>
-        </div>
-        <div class="pf-card">
-          <h3>Verify a Game</h3>
-          <div class="fg">
-            <label class="fl">Server Seed</label>
-            <input class="inp" id="v-server" placeholder="Revealed after game…">
-          </div>
-          <div class="fg">
-            <label class="fl">Client Seed</label>
-            <input class="inp" id="v-client" placeholder="Your seed at the time">
-          </div>
-          <div class="fg">
-            <label class="fl">Nonce</label>
-            <input class="inp" id="v-nonce" placeholder="Game nonce" type="number">
-          </div>
-          <button class="btn btn-p btn-sm" onclick="verify()" style="margin-bottom:12px">Verify</button>
-          <div class="pf-out" id="v-out">Fill in the fields above to verify a game result.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ FAQ ══ -->
-    <div class="page pad" id="p-faq">
-      <div class="ph"><h1>FAQ</h1><p>Common questions about PetFlip</p></div>
-      <div class="faq-list">
-        <div class="faq-item open">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">What is PetFlip?</div>
-          <div class="faq-a">PetFlip is a peer-to-peer PS99 trading platform. Wager your in-game pets and gems against other players in Coinflip, Jackpot, and Upgrader games. All outcomes are provably fair using cryptographic verification.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">How do I deposit pets?</div>
-          <div class="faq-a">Link your Roblox account first, then click Deposit in the sidebar. You'll join a trade with one of our verified PS99 bots. The bot will accept your trade and your pets appear in your inventory instantly.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">How do I link my account?</div>
-          <div class="faq-a">Click "Link Account" in the top bar. Enter your Roblox username and you'll receive a short phrase to say in PS99 chat. Our bot verifies it and links your account automatically — it takes under a minute.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">What are the gem tiers?</div>
-          <div class="faq-a">Pets are ranked: Gargantuan &gt; Titanic &gt; Huge. Values are measured in diamonds based on current PS99 market rates and are updated regularly by the admin.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">What is the house edge?</div>
-          <div class="faq-a">Coinflip: 0%. Jackpot: 2% rake on the pot. Upgrader: 4% applied to expected value. All outcomes are verifiable — no hidden edge.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Can I be scammed?</div>
-          <div class="faq-a">PetFlip handles all transfers through verified PS99 bot accounts. You never trade directly with another player, eliminating scam risk entirely. Withdrawals are processed by our bots within minutes.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="this.closest('.faq-item').classList.toggle('open')">Is PetFlip provably fair?</div>
-          <div class="faq-a">Yes. Every game uses HMAC-SHA256 combining a server seed, your client seed, and a nonce. The server seed hash is committed before each game and revealed after. Use the Provably Fair page to verify any result independently.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ ADMIN ══ -->
-    <div class="page pad" id="p-admin">
-      <div class="ph"><h1>Admin</h1><p>Catalogue, stock and withdrawal management</p></div>
-
-      <!-- Login -->
-      <div id="adm-login">
-        <div class="adm-login-wrap">
-          <div class="card">
-            <div class="card-hd"><span>Admin Access</span></div>
-            <div class="card-bd">
-              <div class="fg">
-                <label class="fl">Admin Key</label>
-                <input class="inp" id="adm-key" type="password" placeholder="Enter admin key">
-              </div>
-              <span class="err" id="adm-err"></span>
-              <button class="btn btn-p btn-fw" onclick="admLogin()">Unlock</button>
-            </div>
+            <button id="jp-join" class="btn btn-g" onclick="jpJoin()" style="display:none;margin-top:10px">Join Jackpot</button>
           </div>
         </div>
       </div>
 
-      <!-- Panel -->
-      <div id="adm-panel" style="display:none">
-        <div id="adm-kpis" class="adm-kpis"></div>
-        <div class="adm-grid">
-          <!-- Left: Add/edit pet -->
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <div class="card">
-              <div class="card-hd"><span id="adm-form-title">Add Pet</span></div>
-              <div class="card-bd">
-                <div class="fg"><label class="fl">Pet Name</label><input class="inp" id="adm-name" placeholder="e.g. Huge Cat"></div>
-                <div class="fg"><label class="fl">Tier</label>
-                  <select class="inp" id="adm-tier">
-                    <option value="huge">Huge</option>
-                    <option value="titan">Titanic</option>
-                    <option value="garg">Gargantuan</option>
-                  </select>
-                </div>
-                <div class="fg"><label class="fl">Value (gems)</label><input class="inp" id="adm-value" type="number" placeholder="e.g. 250000000000"></div>
-                <div class="fg"><label class="fl">Image URL</label><input class="inp" id="adm-img" placeholder="https://…" oninput="admPrev()"></div>
-                <div id="adm-prev" style="margin-bottom:10px;min-height:40px"></div>
-                <span class="err" id="adm-perr"></span>
-                <div style="display:flex;gap:8px">
-                  <button class="btn btn-p btn-fw" onclick="admSavePet()">Save Pet</button>
-                  <button class="btn btn-s" onclick="admReset()">Reset</button>
-                </div>
+      <!-- UPGRADER -->
+      <div id="p-upgrader" class="page">
+        <div class="up-wrap">
+          <div class="up-panes">
+            <div class="up-pane">
+              <div class="up-pane-title">Your Pet</div>
+              <div style="text-align:center">
+                <div id="up-in" style="display:flex;flex-wrap:wrap;gap:6px;min-height:50px;justify-content:center"></div>
+                <div id="up-q1" style="font-size:12px;color:var(--dim);margin-top:6px"></div>
               </div>
             </div>
-
-            <div class="card" id="adm-staff-card" style="display:none">
-              <div class="card-hd"><span>Staff</span></div>
-              <div class="card-bd">
-                <div style="font-size:12px;color:var(--dim);margin-bottom:10px" id="adm-owner"></div>
-                <div class="fg">
-                  <label class="fl">Add Staff Username</label>
-                  <div style="display:flex;gap:6px">
-                    <input class="inp" id="adm-staff-user" placeholder="Roblox username" style="flex:1">
-                    <button class="btn btn-g btn-sm" onclick="admStaffAdd()">Add</button>
-                  </div>
-                </div>
-                <span class="err" id="adm-serr"></span>
-                <div class="table-wrap"><table>
-                  <thead><tr><th>User</th><th></th></tr></thead>
-                  <tbody id="adm-staff"><tr><td colspan="2" style="color:var(--mute);padding:12px">No staff yet.</td></tr></tbody>
-                </table></div>
-              </div>
+            <div class="up-pane" style="text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px">
+              <div id="up-mult">×?</div>
+              <div id="up-chance"></div>
+              <button id="up-go" class="btn btn-g" onclick="upgrade()" style="margin-top:8px;display:none">Upgrade!</button>
+              <div id="up-res"></div>
             </div>
-
-            <div class="card">
-              <div class="card-hd"><span>Credit Items</span></div>
-              <div class="card-bd">
-                <div class="fg"><label class="fl">Username</label><input class="inp" id="cr-user" placeholder="Roblox username"></div>
-                <div class="fg"><label class="fl">Pet</label><select class="inp" id="cr-pet"></select></div>
-                <div class="fg"><label class="fl">Quantity</label><input class="inp" id="cr-qty" type="number" value="1" min="1"></div>
-                <span class="err" id="adm-cerr"></span>
-                <button class="btn btn-g btn-fw" onclick="admCredit()">Credit</button>
+            <div class="up-pane">
+              <div class="up-pane-title">Target Pet</div>
+              <div style="text-align:center">
+                <div id="up-out" style="display:flex;flex-wrap:wrap;gap:6px;min-height:50px;justify-content:center"></div>
+                <div id="up-q2" style="font-size:12px;color:var(--dim);margin-top:6px"></div>
+                <div id="up-tgt-name" style="font-size:13px;font-weight:700;margin-top:4px"></div>
               </div>
             </div>
           </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:8px" id="up-sel-count"></div>
+            <div id="up-inv" style="max-height:200px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:8px">Available Targets</div>
+            <div id="up-tgts" style="max-height:200px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
 
-          <!-- Right: Tables -->
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <div class="card">
-              <div class="card-hd"><span>Catalogue</span></div>
-              <div class="table-wrap"><table>
-                <thead><tr><th></th><th>Name</th><th>Tier</th><th>Value</th><th>Stock</th><th>Actions</th></tr></thead>
-                <tbody id="adm-pets"><tr><td colspan="6" style="color:var(--mute);padding:20px">No pets yet.</td></tr></tbody>
-              </table></div>
+      <!-- HISTORY -->
+      <div id="p-history" class="page">
+        <div class="hist-wrap">
+          <table id="hist">
+            <thead><tr><th>Game</th><th>When</th><th>Wager</th><th>Payout</th><th>Result</th><th>Fair</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PROVABLY FAIR -->
+      <div id="p-fair" class="page">
+        <div class="fair-wrap">
+          <div class="fair-block">
+            <div class="fair-label">Server Seed (hashed)</div>
+            <input id="v-server" class="fair-input" placeholder="Server seed hash…" readonly>
+            <div class="fair-label">Client Seed</div>
+            <input id="v-client" class="fair-input" placeholder="Client seed…">
+            <div class="fair-label">Nonce</div>
+            <input id="v-nonce" class="fair-input" placeholder="Nonce…" type="number">
+            <button class="btn btn-g btn-sm" onclick="verify()">Verify</button>
+            <div id="v-out" style="margin-top:10px;font-size:14px;font-weight:700;min-height:22px;padding:4px 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div id="p-faq" class="page">
+        <div class="faq-wrap">
+          <div class="faq-item"><div class="faq-q">How do I deposit pets?</div><div class="faq-a">Link your Roblox account using the "Link Account" button, then click "Deposit". Trade your pets to one of our bots and they'll appear in your inventory automatically.</div></div>
+          <div class="faq-item"><div class="faq-q">How does Coinflip work?</div><div class="faq-a">Create a flip by selecting pets from your inventory and choosing Heads or Tails. Another player can join — winner takes all. Each side picks the opposite face of the coin.</div></div>
+          <div class="faq-item"><div class="faq-q">How do withdrawals work?</div><div class="faq-a">Go to your inventory and click Withdraw. Select the pets you want to receive and join one of our bots. The bot will send the trade to you in-game.</div></div>
+          <div class="faq-item"><div class="faq-q">Is PetFlip provably fair?</div><div class="faq-a">Yes! Every flip uses a cryptographically secure server seed combined with your client seed and a nonce. You can verify any result on the Provably Fair page.</div></div>
+          <div class="faq-item"><div class="faq-q">What pets are accepted?</div><div class="faq-a">We accept Huge, Titanic, and Gargantuan rarity pets from Pet Simulator 99. Values are updated regularly based on current market prices.</div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div id="p-admin" class="page">
+        <div class="adm-wrap">
+          <div id="adm-login">
+            <div style="font-size:15px;font-weight:800;margin-bottom:12px">Admin Login</div>
+            <div class="adm-label">Admin Key</div>
+            <input id="adm-key" class="adm-input" type="password" placeholder="Enter key…">
+            <div id="adm-err"></div>
+            <button class="btn btn-g" onclick="admLogin()">Login</button>
+          </div>
+          <div id="adm-panel">
+            <div id="adm-kpis" class="adm-kpis-row"></div>
+            <div class="adm-section">
+              <div class="adm-section-title">Add Pet to Catalogue</div>
+              <div class="adm-row">
+                <div style="flex:1"><div class="adm-label">Name</div><input id="adm-name" class="adm-input" placeholder="e.g. Huge Cat"></div>
+                <div style="flex:1"><div class="adm-label">Image URL</div><input id="adm-img" class="adm-input" placeholder="https://…"></div>
+              </div>
+              <div class="adm-row">
+                <div style="flex:1"><div class="adm-label">Value (gems)</div><input id="adm-value" class="adm-input" type="number" placeholder="e.g. 1000000"></div>
+                <div style="flex:1"><div class="adm-label">Tier</div><select id="adm-tier" class="adm-input"><option value="huge">Huge</option><option value="titanic">Titanic</option><option value="gargantuan">Gargantuan</option></select></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div id="adm-prev">🐾</div>
+                <div id="adm-cerr"></div>
+              </div>
+              <button class="btn btn-g btn-sm" onclick="admAddPet()">Add Pet</button>
             </div>
-            <div class="card">
-              <div class="card-hd"><span>Pending Withdrawals</span></div>
-              <div class="table-wrap"><table>
-                <thead><tr><th>Player</th><th>Items</th><th>Value</th><th>Requested</th><th></th></tr></thead>
-                <tbody id="adm-wds"><tr><td colspan="5" style="color:var(--mute);padding:20px">No pending withdrawals.</td></tr></tbody>
-              </table></div>
+            <div class="adm-section">
+              <div class="adm-section-title">Catalogue</div>
+              <div id="adm-pets"></div>
             </div>
-            <div class="card">
-              <div class="card-hd"><span>Players</span></div>
-              <div class="table-wrap"><table>
-                <thead><tr><th>Player</th><th>Items</th><th>Value</th></tr></thead>
-                <tbody id="adm-users"><tr><td colspan="3" style="color:var(--mute);padding:20px">No players yet.</td></tr></tbody>
-              </table></div>
+            <div class="adm-section">
+              <div class="adm-section-title">Give Owner Role</div>
+              <div class="adm-row"><div style="flex:1"><div class="adm-label">Roblox Username</div><input id="adm-owner" class="adm-input" placeholder="Username…"></div></div>
+              <div id="adm-perr"></div>
+              <button class="btn btn-g btn-sm" onclick="admOwner()">Grant Role</button>
+            </div>
+            <div class="adm-section">
+              <div class="adm-section-title">Staff Lookup</div>
+              <div class="adm-label">Roblox Username</div>
+              <div class="adm-row">
+                <input id="adm-staff-user" class="adm-input" placeholder="Username…" style="flex:1">
+                <button class="btn btn-g btn-sm" onclick="admStaff()">Look up</button>
+              </div>
+              <div id="adm-staff-card"></div>
+              <div id="adm-serr"></div>
+              <div style="margin-top:12px"><div class="adm-section-title">All Users</div><div id="adm-users"></div></div>
+              <div style="margin-top:12px"><div class="adm-section-title">Pending Withdrawals</div><div id="adm-wds"></div></div>
+              <div style="margin-top:12px"><div class="adm-section-title">Staff List</div><div id="adm-staff"></div></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-  </div><!-- /content -->
-</div><!-- /main-col -->
-</div><!-- /wrap -->
-
-<!-- ══════════════ OVERLAYS ══════════════ -->
-
-<!-- Create / Join Flip -->
-<div class="ov" id="ov-create">
-  <div class="ov-box md">
-    <div class="ov-hd">
-      <div>
-        <div class="ov-ttl" id="cr-title">Create Coinflip</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:2px" id="cr-sub">Pick a side and choose pets</div>
-      </div>
-      <button class="ov-x" onclick="closeOv('ov-create')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <!-- Side select -->
-      <div id="cr-sides" style="margin-bottom:16px">
-        <div style="font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">Pick Your Side</div>
-        <div class="so-row">
-          <div class="so on" id="so-h" data-s="h" onclick="pickSide('h')"><span class="so-ic">🟡</span>Heads</div>
-          <div class="so" id="so-t" data-s="t" onclick="pickSide('t')"><span class="so-ic">🔵</span>Tails</div>
-        </div>
-      </div>
-      <!-- Search + select all -->
-      <div class="search-row">
-        <input class="inp" id="cr-q" placeholder="Search inventory…" oninput="renderCreatePicker()">
-        <button class="btn btn-s btn-sm" onclick="crSelAll()">All</button>
-        <button class="btn btn-s btn-sm" onclick="crClear()">Clear</button>
-      </div>
-      <div id="cr-picker" style="max-height:340px;overflow-y:auto;margin-bottom:12px"></div>
-      <div class="pick-info">
-        <span style="font-size:12px;color:var(--dim)"><b id="cr-n">0</b> selected</span>
-        <span class="pick-sel" style="margin-left:auto"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg><span id="cr-sum">0</span></span>
-      </div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-create')">Cancel</button>
-      <button class="btn btn-y" id="cr-go" onclick="createFlip()" disabled>Create Flip</button>
-    </div>
-  </div>
-</div>
-
-<!-- Deposit -->
-<div class="ov" id="ov-dep">
-  <div class="ov-box md">
-    <div class="ov-hd">
-      <div class="ov-ttl">Deposit</div>
-      <button class="ov-x" onclick="closeOv('ov-dep')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div id="dep-dev" style="display:none">
-        <div class="dep-info">🧪 <b>Test Mode</b> — No real server connected. Use the button below to add demo pets to your inventory for testing.</div>
-        <button class="btn btn-g btn-fw" onclick="addTestItems()" style="margin-bottom:16px">Add Demo Pets</button>
-      </div>
-      <div id="dep-live">
-        <div class="dep-info">Join a bot in PS99 and send a trade. The bot will accept it and your pets will appear instantly.</div>
-        <div id="dep-bots"></div>
-      </div>
-      <div class="dep-tabs" style="margin:16px -20px 0">
-        <div class="dep-tab on" id="dep-tab-pets" onclick="switchDepTab('pets')">Pets</div>
-        <div class="dep-tab" id="dep-tab-gems" onclick="switchDepTab('gems')">Gems</div>
-      </div>
-      <div id="dep-pets-pane" style="padding-top:14px">
-        <div class="dep-info">Send Huge, Titanic or Gargantuan pets. The bot will confirm and credit your account.</div>
-      </div>
-      <div id="dep-gems-pane" style="display:none;padding-top:14px">
-        <div class="dep-info">Gems are accepted at current market rates. Send them in a trade with the bot.</div>
-      </div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-dep')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Withdraw -->
-<div class="ov" id="ov-wd">
-  <div class="ov-box md">
-    <div class="ov-hd">
-      <div class="ov-ttl">Withdraw</div>
-      <button class="ov-x" onclick="closeOv('ov-wd')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div id="wd-pending"></div>
-      <div class="search-row">
-        <input class="inp" id="wd-q" placeholder="Search inventory…" oninput="renderWd()">
-      </div>
-      <div id="wd-picker" style="max-height:340px;overflow-y:auto;margin-bottom:12px"></div>
-      <div class="pick-info">
-        <span style="font-size:12px;color:var(--dim)"><b id="wd-n">0</b> selected</span>
-        <span class="pick-sel" style="margin-left:auto"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg><span id="wd-sum">0</span></span>
-      </div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-wd')">Cancel</button>
-      <button class="btn btn-r" onclick="wdClear()">Clear</button>
-      <button class="btn btn-p" onclick="confirmWd()">Request Withdrawal</button>
-    </div>
-  </div>
-</div>
-
-<!-- Withdrawal Bot -->
-<div class="ov" id="ov-wdbot">
-  <div class="ov-box sm">
-    <div class="ov-hd">
-      <div class="ov-ttl">Withdrawal Requested</div>
-      <button class="ov-x" onclick="closeOv('ov-wdbot')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div style="text-align:center;padding:8px 0 16px">
-        <div style="font-size:36px;margin-bottom:8px">✅</div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Withdrawal Queued</div>
-        <div class="dep-info" style="text-align:left;margin:12px 0" id="wdbot-sub"></div>
-      </div>
-      <div id="wd-bots"></div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-wdbot')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Inventory -->
-<div class="ov" id="ov-inv">
-  <div class="ov-box lg">
-    <div class="ov-hd">
-      <div class="ov-ttl">Inventory</div>
-      <button class="ov-x" onclick="closeOv('ov-inv')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div class="inv-head">
-        <div class="inv-ava" id="inv-ava"></div>
-        <div>
-          <div style="font-size:16px;font-weight:800" id="inv-name">Guest</div>
-          <div style="font-size:12px;color:var(--dim)">Your deposited pets</div>
-        </div>
-      </div>
-      <div class="inv-stats">
-        <div class="inv-stat">
-          <small>Total Value</small>
-          <b id="iv-total" style="display:flex;align-items:center;gap:4px"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>0</b>
-        </div>
-        <div class="inv-stat">
-          <small>Items</small>
-          <b id="iv-pets">0</b>
-        </div>
-        <div class="inv-stat">
-          <small>Top Item</small>
-          <b id="iv-gems" style="display:flex;align-items:center;gap:4px"><svg class="gem" viewBox="0 0 24 24"><path fill="#5fd4ff" d="M6 3h12l4 6-10 12L2 9z"/><path fill="#b5ecff" d="M6 3l3 6h6l3-6z" opacity=".7"/></svg>0</b>
-        </div>
-      </div>
-      <div class="inv-cats" id="inv-cats"></div>
-      <div class="inv-controls">
-        <input class="inp" id="inv-q" placeholder="Search…" oninput="renderInv()">
-        <select class="inp" id="inv-sort" onchange="renderInv()" style="width:140px">
-          <option value="hi">Value: High → Low</option>
-          <option value="lo">Value: Low → High</option>
-          <option value="az">Name: A–Z</option>
-        </select>
-      </div>
-      <div id="inv-grid"></div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-inv')">Close</button>
-      <button class="btn btn-g" onclick="closeOv('ov-inv');openDep()">Deposit More</button>
-    </div>
-  </div>
-</div>
-
-<!-- Values -->
-<div class="ov" id="ov-vals">
-  <div class="ov-box lg">
-    <div class="ov-hd">
-      <div class="ov-ttl">Pet Values</div>
-      <button class="ov-x" onclick="closeOv('ov-vals')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div class="search-row" style="margin-bottom:14px">
-        <input class="inp" id="vals-q" placeholder="Search pets…" oninput="renderValues()">
-      </div>
-      <div id="vals-grid"></div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-s" onclick="closeOv('ov-vals')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Profile -->
-<div class="ov" id="ov-prof">
-  <div class="ov-box sm">
-    <div class="ov-hd">
-      <div class="ov-ttl">Profile</div>
-      <button class="ov-x" onclick="closeOv('ov-prof')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <div id="pf-card"></div>
-      <div class="fg" style="margin-top:16px">
-        <label class="fl">Client Seed</label>
-        <input class="inp" id="pf-seed" placeholder="Your client seed">
-      </div>
-      <div class="fg">
-        <label class="fl">Nonce</label>
-        <div class="pf-seed-row" id="pf-nonce">0</div>
-      </div>
-    </div>
-    <div class="ov-ft">
-      <button class="btn btn-r btn-sm" onclick="unlink()">Unlink</button>
-      <button class="btn btn-s btn-sm" onclick="closeOv('ov-prof')">Cancel</button>
-      <button class="btn btn-p btn-sm" onclick="saveProfile()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- Coinflip Room -->
-<div class="ov" id="ov-room">
-  <div class="ov-box md">
-    <div class="ov-hd">
-      <div>
-        <div class="ov-ttl" id="room-title">Coinflip</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:2px;font-family:var(--mono)" id="room-sub"></div>
-      </div>
-      <button class="ov-x" id="room-x" onclick="closeOv('ov-room')">✕</button>
-    </div>
-    <div class="ov-bd" style="padding:0">
-      <div class="room-wrap">
-        <div class="room-side" id="rs-a"></div>
-        <div class="room-mid">
-          <div id="coin">
-            <div class="face h">H</div>
-            <div class="face t">T</div>
-          </div>
-          <div class="result" id="room-res"></div>
-        </div>
-        <div class="room-side" id="rs-b"></div>
-      </div>
-      <div style="padding:14px 20px;border-top:1px solid var(--line)">
-        <div class="room-fair-info" id="room-fair"></div>
-        <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="go('fair');closeOv('ov-room')" id="room-fair-link">Verify on Provably Fair ↗</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Link Roblox -->
-<div class="ov" id="ov-link">
-  <div class="ov-box sm">
-    <div class="ov-hd">
-      <div>
-        <div class="ov-ttl">Link Roblox Account</div>
-        <div class="lk-sub" id="lk-sub" style="margin-top:2px;margin-bottom:0">Step 1 of 2 — who are you on Roblox?</div>
-      </div>
-      <button class="ov-x" onclick="closeOv('ov-link')">✕</button>
-    </div>
-    <div class="ov-bd">
-      <!-- Steps indicator -->
-      <div class="lk-steps">
-        <div class="lk-step on" id="lk-1"><div class="lk-num">1</div><small>Username</small></div>
-        <div class="lk-step" id="lk-2"><div class="lk-num">2</div><small>Verify</small></div>
-        <div class="lk-step" id="lk-3"><div class="lk-num">3</div><small>Done</small></div>
-      </div>
-
-      <!-- Step 1 -->
-      <div id="lk-f1">
-        <div class="fg">
-          <label class="fl">Your Roblox Username</label>
-          <input class="inp" id="lk-user" placeholder="e.g. CoolDude123" onkeydown="if(event.key==='Enter')linkStart()">
-        </div>
-        <span class="err" id="lk-err1"></span>
-        <div id="lk-dev" style="margin-bottom:12px;padding:10px 14px;background:var(--bg3);border:1px solid var(--line);border-radius:8px;font-size:12px;color:var(--dim)">
-          🧪 <b style="color:var(--text)">Test mode</b> — no server connected. Enter any username and use test mode.
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-p btn-fw" id="lk-go1" onclick="linkStart()">Continue</button>
-        </div>
-        <div style="text-align:center;margin-top:10px">
-          <button class="btn btn-s btn-sm" onclick="linkTest()">Use Test Mode</button>
-        </div>
-      </div>
-
-      <!-- Step 2 -->
-      <div id="lk-f2" style="display:none">
-        <div class="lk-card" id="lk-card"></div>
-        <div style="font-size:13px;color:var(--dim);margin-bottom:10px;line-height:1.6">
-          Go to <a id="lk-prof" href="#" target="_blank" rel="noopener">your Roblox profile</a> and paste this phrase in your <b style="color:var(--text)">About/Description</b> section, then click Verify.
-        </div>
-        <div class="lk-phrase-box" id="lk-phrase">—</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <button class="btn btn-s btn-sm" onclick="copyPhrase()">Copy Phrase</button>
-          <span class="lk-timer" id="lk-timer">05:00</span>
-        </div>
-        <span class="err" id="lk-err2"></span>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-s" onclick="linkBack()">← Back</button>
-          <button class="btn btn-p btn-fw" id="lk-go2" onclick="linkCheck()">Verify Bio</button>
-        </div>
-      </div>
-
-      <!-- Step 3 -->
-      <div id="lk-f3" style="display:none">
-        <div class="done-wrap">
-          <div class="done-ico">🎉</div>
-          <div class="done-title">Welcome, <span id="lk-done-name"></span>!</div>
-          <div class="done-sub">Your account is linked. You can deposit pets and start playing.</div>
-        </div>
-        <div class="lk-card" id="lk-card3" style="margin-top:14px"></div>
-      </div>
-    </div>
-    <div class="ov-ft" id="lk-f3-ft" style="display:none">
-      <button class="btn btn-p" onclick="closeOv('ov-link')">Start Playing</button>
     </div>
   </div>
 </div>
 
 <div id="toasts"></div>
+
+<!-- OVERLAYS -->
+<div id="ov-create" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Create Coinflip</div><div class="ov-close" onclick="closeOv('ov-create')">✕</div></div>
+    <div class="ov-body">
+      <div class="ov-label">Choose Your Side</div>
+      <div class="sides-row">
+        <div class="side-btn on" onclick="pickSide('h')" id="side-h"><div style="font-size:28px">🟡</div><div>Heads</div></div>
+        <div class="side-btn" onclick="pickSide('t')" id="side-t"><div style="font-size:28px">🟣</div><div>Tails</div></div>
+      </div>
+      <div class="ov-label">Search Inventory</div>
+      <input id="cr-n" class="ov-input" placeholder="Search pets…" oninput="renderCreatePicker()">
+      <div id="cr-picker" style="display:flex;flex-wrap:wrap;gap:6px;max-height:180px;overflow-y:auto;margin-top:6px"></div>
+      <div class="cr-sum-row">
+        <div><div class="cr-sum-label">Selected</div><div id="cr-sum">0</div></div>
+        <div style="margin-left:auto"><div class="cr-sum-label">My Side</div><div id="cr-user" style="font-size:12px;color:var(--dim)">—</div></div>
+      </div>
+      <div id="cr-sides" style="display:flex;gap:12px;margin-top:14px">
+        <div style="flex:1"><div class="so-label">Your Pets</div><div id="so-h" style="display:flex;flex-wrap:wrap;gap:4px;min-height:36px"></div></div>
+        <div style="flex:1"><div class="so-label">Opponent Gets</div><div id="so-t" style="display:flex;flex-wrap:wrap;gap:4px;min-height:36px"></div></div>
+      </div>
+      <div id="cr-q" style="display:flex;gap:8px;margin-top:8px"></div>
+    </div>
+    <div class="ov-foot">
+      <div id="cr-title" style="font-size:12px;color:var(--dim);align-self:center"></div>
+      <div id="cr-sub" style="font-size:12px;color:var(--dim);align-self:center"></div>
+      <button id="cr-go" class="btn btn-g" onclick="createFlip()">Create Flip</button>
+    </div>
+  </div>
+</div>
+
+<div id="ov-dep" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Deposit</div><div class="ov-close" onclick="closeOv('ov-dep')">✕</div></div>
+    <div class="ov-body">
+      <div class="dep-tabs">
+        <div id="dep-tab-pets" class="dep-tab on" onclick="depTab('pets')">Pets</div>
+        <div id="dep-tab-gems" class="dep-tab" onclick="depTab('gems')">Gems</div>
+      </div>
+      <div id="dep-pets-pane" class="dep-pane on">
+        <div id="dep-live"></div>
+        <div id="dep-dev" style="display:none;padding:10px;background:var(--brand-d);border:1px solid var(--brand);border-radius:8px;font-size:12px;color:var(--brand);margin-bottom:8px">Dev mode — deposits auto-credit.</div>
+        <div id="dep-bots"></div>
+      </div>
+      <div id="dep-gems-pane" class="dep-pane">
+        <div style="background:var(--bg4);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px;color:var(--dim);line-height:1.6"><b style="color:var(--text)">Deposit Gems</b><br>Send gems to any bot from the Pets tab.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ov-wd" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Withdraw</div><div class="ov-close" onclick="closeOv('ov-wd')">✕</div></div>
+    <div class="ov-body">
+      <input id="wd-n" class="ov-input" placeholder="Search…" oninput="renderWd()" style="margin-bottom:10px">
+      <div class="wd-sel" id="wd-picker"></div>
+      <div class="wd-sum-row">
+        <span style="font-size:12px;color:var(--dim)">Total:</span>
+        <span id="wd-sum" style="font-size:14px;font-weight:800;font-family:var(--mono);flex:1;margin-left:6px">0</span>
+        <div id="wd-q" style="display:flex;gap:8px"></div>
+      </div>
+      <div id="wd-pending" style="margin-top:10px;font-size:12px;color:var(--dim)"></div>
+    </div>
+    <div class="ov-foot"><button class="btn btn-g" onclick="withdraw()">Request Withdrawal</button></div>
+  </div>
+</div>
+
+<div id="ov-wdbot" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Join Bot to Receive</div><div class="ov-close" onclick="closeOv('ov-wdbot')">✕</div></div>
+    <div class="ov-body">
+      <div style="background:var(--bg4);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px;color:var(--dim);margin-bottom:10px">Join any available bot in-game to receive your pets.</div>
+      <div id="wdbot-sub"></div>
+      <div id="wd-bots"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ov-inv" class="ov">
+  <div class="ov-box" style="width:min(640px,96vw)">
+    <div class="ov-head"><div class="ov-head-title">Inventory</div><div class="ov-close" onclick="closeOv('ov-inv')">✕</div></div>
+    <div class="ov-body">
+      <div class="inv-head-row">
+        <div class="inv-ava-lg" id="inv-ava">👤</div>
+        <div><div class="inv-name-lg" id="inv-name">My Inventory</div></div>
+      </div>
+      <div class="inv-controls">
+        <input id="inv-q" class="ov-input" placeholder="Search pets…" oninput="renderInv()" style="flex:1">
+        <select id="inv-sort" class="inv-sort-sel" onchange="renderInv()">
+          <option value="desc">Highest value</option>
+          <option value="asc">Lowest value</option>
+          <option value="az">A–Z</option>
+        </select>
+      </div>
+      <div id="inv-cats" class="inv-cats-row"></div>
+      <div id="inv-grid"></div>
+      <div class="inv-totals">
+        <div><div class="inv-total-label">Pets</div><div class="inv-total-val" id="iv-pets">—</div></div>
+        <div><div class="inv-total-label">Gems</div><div class="inv-total-val" id="iv-gems">—</div></div>
+        <div><div class="inv-total-label">Total</div><div class="inv-total-val" id="iv-total">—</div></div>
+      </div>
+    </div>
+    <div class="ov-foot">
+      <button class="btn btn-s btn-sm" onclick="openWd()">Withdraw</button>
+      <button class="btn btn-g btn-sm" onclick="openDep()">Deposit</button>
+    </div>
+  </div>
+</div>
+
+<div id="ov-vals" class="ov">
+  <div class="ov-box" style="width:min(640px,96vw)">
+    <div class="ov-head"><div class="ov-head-title">Pet Values</div><div class="ov-close" onclick="closeOv('ov-vals')">✕</div></div>
+    <div class="ov-body">
+      <input id="vals-q" class="ov-input" placeholder="Search pets…" oninput="renderValues()" style="margin-bottom:10px">
+      <div id="vals-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="ov-prof" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Profile</div><div class="ov-close" onclick="closeOv('ov-prof')">✕</div></div>
+    <div class="ov-body">
+      <div id="pf-card"></div>
+      <div class="fair-label" style="margin-top:14px">Client Seed</div>
+      <div class="pf-seed-row">
+        <input id="pf-seed" class="fair-input" style="flex:1;margin-bottom:0">
+        <button class="btn btn-g btn-sm" onclick="saveSeed()">Save</button>
+      </div>
+      <div class="pf-nonce-row">
+        <span class="pf-nonce-label">Current Nonce:</span>
+        <span id="pf-nonce" style="font-family:var(--mono);font-size:14px;font-weight:700;margin-left:6px">0</span>
+      </div>
+      <div class="pf-actions">
+        <button class="btn btn-s btn-sm" onclick="resetAll()">Reset Demo</button>
+        <button class="btn btn-s btn-sm" onclick="unlinkAccount()" style="margin-left:auto;color:var(--lose)">Unlink Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ov-room" class="ov">
+  <div class="ov-box">
+    <div class="ov-head">
+      <div class="ov-head-title" id="room-title">Coinflip Room</div>
+      <div class="ov-close" id="room-x" onclick="closeOv('ov-room')">✕</div>
+    </div>
+    <div class="ov-body">
+      <div id="room-sub"></div>
+      <div class="room-sides">
+        <div class="room-side"><div class="room-side-label">🟡 Heads</div><div class="room-pets" id="rs-a"></div></div>
+        <div class="room-side"><div class="room-side-label">🟣 Tails</div><div class="room-pets" id="rs-b"></div></div>
+      </div>
+      <div class="coin-wrap">
+        <div id="coin">
+          <div class="face h">🟡</div>
+          <div class="face t">🟣</div>
+        </div>
+      </div>
+      <div class="room-result">
+        <div id="room-res"></div>
+        <div id="room-fair"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ov-link" class="ov">
+  <div class="ov-box">
+    <div class="ov-head"><div class="ov-head-title">Link Roblox Account</div><div class="ov-close" onclick="closeOv('ov-link')">✕</div></div>
+    <div class="ov-body">
+      <div id="lk-card" class="lk-step on">
+        <div style="font-size:13px;color:var(--dim);margin-bottom:12px;line-height:1.6">Enter your Roblox username to get a verification phrase.</div>
+        <div class="lk-user-row">
+          <input id="lk-user" class="ov-input" placeholder="Roblox username…" style="flex:1">
+          <button id="lk-go1" class="btn btn-g btn-sm" onclick="lkGetPhrase()">Get Phrase</button>
+        </div>
+        <div id="lk-err1"></div>
+        <div id="lk-dev" style="display:none;padding:10px;background:var(--brand-d);border:1px solid var(--brand);border-radius:8px;font-size:12px;color:var(--brand);margin-top:10px">Dev mode — any username works instantly.</div>
+      </div>
+      <div id="lk-card3" class="lk-step">
+        <div style="font-size:13px;color:var(--dim);margin-bottom:10px;line-height:1.6">Put this phrase in your <b style="color:var(--text)">Roblox About Me</b>, then click Verify.</div>
+        <div class="lk-phrase-box">
+          <div id="lk-phrase">—</div>
+          <div id="lk-timer"></div>
+        </div>
+        <div class="lk-user-row"><button id="lk-go2" class="btn btn-g" onclick="lkVerify()">Verify</button></div>
+        <div id="lk-err2"></div>
+      </div>
+      <div id="lk-sub" class="lk-step">
+        <div style="text-align:center;padding:16px 0">
+          <div style="font-size:36px;margin-bottom:10px">✅</div>
+          <div id="lk-done-name" style="font-size:16px;font-weight:800;margin-bottom:6px"></div>
+          <div style="font-size:13px;color:var(--dim)">Account linked successfully!</div>
+        </div>
+        <div id="lk-prof"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="kpis2" style="display:none"></div>
+
 <script src="app.js"></script>
 </body>
 </html>
